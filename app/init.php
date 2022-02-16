@@ -61,8 +61,8 @@ const APP_MODE_ADMIN = 'admin';
 const APP_PAGING_LIMIT = 12;
 const APP_LIMIT_COUNT = 5000;
 const APP_LIMIT_USERS = 10000;
-const APP_CACHE_BUSTER = 201;
-const APP_VERSION_STABLE = '0.12.1';
+const APP_CACHE_BUSTER = 202;
+const APP_VERSION_STABLE = '0.12.2';
 const APP_DATABASE_ATTRIBUTE_EMAIL = 'email';
 const APP_DATABASE_ATTRIBUTE_ENUM = 'enum';
 const APP_DATABASE_ATTRIBUTE_IP = 'ip';
@@ -484,7 +484,7 @@ $register->set('smtp', function () {
     return $mail;
 });
 $register->set('geodb', function () {
-    return new Reader(__DIR__.'/db/DBIP/dbip-country-lite-2021-12.mmdb');
+    return new Reader(__DIR__.'/db/DBIP/dbip-country-lite-2022-02.mmdb');
 });
 $register->set('db', function () { // This is usually for our workers or CLI commands scope
     $dbHost = App::getEnv('_APP_DB_HOST', '');
