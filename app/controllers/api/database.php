@@ -2038,7 +2038,7 @@ App::patch('/v1/database/collections/:collectionId/documents/:documentId')
         foreach($dataKeys as $key)
         {
             if (strtolower($key) == "userid") {
-                $data[$key] = $user->getId();
+                $data[$key] = $document->getArrayCopy()[$key];
                 break;
             }
         }
