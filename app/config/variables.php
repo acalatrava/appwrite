@@ -789,6 +789,15 @@ return [
                 'question' => '',
                 'filter' => ''
             ],
+            [
+                'name' => '_APP_FEATURE_PERMISSIONS_UNRESTRICTED',
+                'description' => 'This will enable the Documents/Buckets (unrestricted mode) feature.',
+                'introduction' => '0.12.1',
+                'default' => 'disabled',
+                'required' => false,
+                'question' => '',
+                'filter' => ''
+            ],
         ],
     ],
     [
