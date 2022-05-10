@@ -223,7 +223,7 @@ App::put('/v1/storage/buckets/:bucketId')
     ->label('sdk.response.model', Response::MODEL_BUCKET)
     ->param('bucketId', '', new UID(), 'Bucket unique ID.')
     ->param('name', null, new Text(128), 'Bucket name', false)
-    ->param('permission', null, new WhiteList(['file', 'bucket']), 'Permissions type model to use for reading files in this bucket. You can use bucket-level permission set once on the bucket using the `read` and `write` params, or you can set file-level permission where each file read and write params will decide who has access to read and write to each file individually. [learn more about permissions](/docs/permissions) and get a full list of available permissions.')
+    ->param('permission', null, new WhiteList(['file', 'file-unrestricted', 'bucket']), 'Permissions type model to use for reading files in this bucket. You can use bucket-level permission set once on the bucket using the `read` and `write` params, or you can set file-level permission where each file read and write params will decide who has access to read and write to each file individually. [learn more about permissions](/docs/permissions) and get a full list of available permissions.')
     ->param('read', null, new Permissions(), 'An array of strings with read permissions. By default inherits the existing read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.', true)
     ->param('write', null, new Permissions(), 'An array of strings with write permissions. By default inherits the existing write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.', true)
     ->param('enabled', true, new Boolean(true), 'Is bucket enabled?', true)
@@ -398,7 +398,7 @@ App::post('/v1/storage/buckets/:bucketId/files')
         // Users can only add their roles to files, API keys and Admin users can add any
         $roles = Authorization::getRoles();
 
-        if (!Auth::isAppUser($roles) && !Auth::isPrivilegedUser($roles)) {
+        if (!Auth::isAppUser($roles) && !Auth::isPrivilegedUser($roles) && $bucket->getAttribute('permission') !== 'file-unrestricted') {
             foreach ($read as $role) {
                 if (!Authorization::isRole($role)) {
                     throw new Exception('Read permissions must be one of: (' . \implode(', ', $roles) . ')', 400, Exception::USER_UNAUTHORIZED);
@@ -484,7 +484,7 @@ App::post('/v1/storage/buckets/:bucketId/files')
         $path = $deviceFiles->getPath($fileId . '.' . \pathinfo($fileName, PATHINFO_EXTENSION));
         $path = str_ireplace($deviceFiles->getRoot(), $deviceFiles->getRoot() . DIRECTORY_SEPARATOR . $bucket->getId(), $path); // Add bucket id to path after root
 
-        if ($permissionBucket) {
+        if ($permissionBucket || $bucket->getAttribute('permission') === 'file-unrestricted') {
             $file = Authorization::skip(function () use ($dbForProject, $bucket, $fileId) {
                 return $dbForProject->getDocument('bucket_' . $bucket->getInternalId(), $fileId);
             });
