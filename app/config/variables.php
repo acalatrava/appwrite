@@ -651,6 +651,24 @@ return [
                 'question' => '',
                 'filter' => ''
             ],
+            [
+                'name' => 'OPEN_RUNTIMES_NETWORK',
+                'description' => 'The docker network used for communication between the executor and runtimes. Change this if you have altered the default network names.',
+                'introduction' => '0.13.0',
+                'default' => 'appwrite_runtimes',
+                'required' => false,
+                'question' => '',
+                'filter' => ''
+            ],
+            [
+                'name' => '_APP_FEATURE_PERMISSIONS_UNRESTRICTED',
+                'description' => 'This will enable the Documents/Buckets (unrestricted mode) feature.',
+                'introduction' => '0.12.1',
+                'default' => 'disabled',
+                'required' => false,
+                'question' => '',
+                'filter' => ''
+            ],
         ],
         [
             'category' => 'Maintenance',
