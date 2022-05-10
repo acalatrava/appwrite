@@ -89,6 +89,7 @@ services:
       - _APP_FUNCTIONS_MEMORY
       - _APP_FUNCTIONS_MEMORY_SWAP
       - _APP_EXECUTOR_HOST
+      - _APP_FEATURE_PERMISSIONS_UNRESTRICTED
 
   appwrite-worker-usage:
     entrypoint: worker-usage
