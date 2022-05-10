@@ -312,6 +312,7 @@ App::get('/console/storage')
             ->setParam('home', App::getEnv('_APP_HOME', 0))
             ->setParam('fileLimit', App::getEnv('_APP_STORAGE_LIMIT', 0))
             ->setParam('fileLimitHuman', Storage::human(App::getEnv('_APP_STORAGE_LIMIT', 0)))
+            ->setParam('unrestrictedFeature', App::getEnv('_APP_FEATURE_PERMISSIONS_UNRESTRICTED', 'disabled'))
         ;
 
         $layout
