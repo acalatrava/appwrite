@@ -1642,6 +1642,16 @@ App::post('/v1/database/collections/:collectionId/documents')
             }
         }
 
+        // Para uso interno, si el documento tiene el atributo userID lo forzamos al userID que crea el documento
+        $dataKeys=array_keys($data);
+        foreach($dataKeys as $key)
+        {
+            if (strtolower($key) == "userid") {
+                $data[$key] = $user->getId();
+                break;
+            }
+        }
+
         try {
             if ($collection->getAttribute('permission') === 'collection' || $collection->getAttribute('permission') === 'document-unrestricted') {
                 /** @var Document $document */
@@ -2028,6 +2038,16 @@ App::patch('/v1/database/collections/:collectionId/documents/:documentId')
                         throw new Exception('Write permissions must be one of: (' . \implode(', ', $roles) . ')', 400, Exception::USER_UNAUTHORIZED);
                     }
                 }
+            }
+        }
+
+        // Para uso interno, si el documento tiene el atributo userID lo forzamos al userID que crea el documento
+        $dataKeys=array_keys($data);
+        foreach($dataKeys as $key)
+        {
+            if (strtolower($key) == "userid") {
+                $data[$key] = $document->getArrayCopy()[$key];
+                break;
             }
         }
 
