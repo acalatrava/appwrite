@@ -200,8 +200,9 @@ App::post('/v1/runtimes')
             $vars = array_map(fn ($v) => strval($v), $vars);
             $orchestration
                 ->setCpus((int) App::getEnv('_APP_FUNCTIONS_CPUS', 0))
-                ->setMemory((int) App::getEnv('_APP_FUNCTIONS_MEMORY', 0))
-                ->setSwap((int) App::getEnv('_APP_FUNCTIONS_MEMORY_SWAP', 0));
+                //->setMemory((int) App::getEnv('_APP_FUNCTIONS_MEMORY', 0))
+                //->setSwap((int) App::getEnv('_APP_FUNCTIONS_MEMORY_SWAP', 0))
+            ;
             
             /** Keep the container alive if we have commands to be executed */
             $entrypoint = !empty($commands) ? [
