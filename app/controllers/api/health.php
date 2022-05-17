@@ -1,15 +1,13 @@
 <?php
 
-use Appwrite\ClamAV\Network;
-use Appwrite\Event\Event;
-use Appwrite\Extend\Exception;
 use Appwrite\Utopia\Response;
 use Utopia\App;
-use Utopia\Database\Document;
-use Utopia\Registry\Registry;
-use Utopia\Storage\Device;
+use Appwrite\Extend\Exception;
 use Utopia\Storage\Device\Local;
-use Utopia\Storage\Storage; 
+use Utopia\Storage\Storage;
+use Appwrite\ClamAV\Network;
+use Appwrite\Event\Event;
+use Utopia\Database\Document;
 
 App::get('/v1/health')
     ->desc('Get HTTP')
@@ -23,7 +21,8 @@ App::get('/v1/health')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_STATUS)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $output = [
             'status' => 'pass',
@@ -41,7 +40,8 @@ App::get('/v1/health/version')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_VERSION)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $response->dynamic(new Document([ 'version' => APP_VERSION_STABLE ]), Response::MODEL_HEALTH_VERSION);
     });
@@ -59,7 +59,9 @@ App::get('/v1/health/db')
     ->label('sdk.response.model', Response::MODEL_HEALTH_STATUS)
     ->inject('response')
     ->inject('utopia')
-    ->action(function (Response $response, App $utopia) {
+    ->action(function ($response, $utopia) {
+        /** @var Appwrite\Utopia\Response $response */
+        /** @var Utopia\App $utopia */
 
         $checkStart = \microtime(true);
 
@@ -97,7 +99,10 @@ App::get('/v1/health/cache')
     ->label('sdk.response.model', Response::MODEL_HEALTH_STATUS)
     ->inject('response')
     ->inject('utopia')
-    ->action(function (Response $response, App $utopia) {
+    ->action(function ($response, $utopia) {
+        /** @var Appwrite\Utopia\Response $response */
+        /** @var Utopia\App $utopia */
+        /** @var Redis */
 
         $checkStart = \microtime(true);
 
@@ -127,7 +132,8 @@ App::get('/v1/health/time')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_TIME)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         /*
          * Code from: @see https://www.beliefmedia.com.au/query-ntp-time-server
@@ -184,7 +190,8 @@ App::get('/v1/health/queue/webhooks')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_QUEUE)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $response->dynamic(new Document([ 'size' => Resque::size(Event::WEBHOOK_QUEUE_NAME) ]), Response::MODEL_HEALTH_QUEUE);
     }, ['response']);
@@ -201,7 +208,8 @@ App::get('/v1/health/queue/logs')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_QUEUE)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $response->dynamic(new Document([ 'size' => Resque::size(Event::AUDITS_QUEUE_NAME) ]), Response::MODEL_HEALTH_QUEUE);
     }, ['response']);
@@ -218,7 +226,8 @@ App::get('/v1/health/queue/usage')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_QUEUE)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $response->dynamic(new Document([ 'size' => Resque::size(Event::USAGE_QUEUE_NAME) ]), Response::MODEL_HEALTH_QUEUE);
     }, ['response']);
@@ -235,7 +244,8 @@ App::get('/v1/health/queue/certificates')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_QUEUE)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $response->dynamic(new Document([ 'size' => Resque::size(Event::CERTIFICATES_QUEUE_NAME) ]), Response::MODEL_HEALTH_QUEUE);
     }, ['response']);
@@ -252,7 +262,8 @@ App::get('/v1/health/queue/functions')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_QUEUE)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $response->dynamic(new Document([ 'size' => Resque::size(Event::FUNCTIONS_QUEUE_NAME) ]), Response::MODEL_HEALTH_QUEUE);
     }, ['response']);
@@ -269,7 +280,8 @@ App::get('/v1/health/storage/local')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_STATUS)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $checkStart = \microtime(true);
 
@@ -310,7 +322,8 @@ App::get('/v1/health/anti-virus')
     ->label('sdk.response.type', Response::CONTENT_TYPE_JSON)
     ->label('sdk.response.model', Response::MODEL_HEALTH_ANTIVIRUS)
     ->inject('response')
-    ->action(function (Response $response) {
+    ->action(function ($response) {
+        /** @var Appwrite\Utopia\Response $response */
 
         $output = [
             'status' => '',
@@ -346,7 +359,10 @@ App::get('/v1/health/stats') // Currently only used internally
     ->inject('response')
     ->inject('register')
     ->inject('deviceFiles')
-    ->action(function (Response $response, Registry $register, Device $deviceFiles) {
+    ->action(function ($response, $register, $deviceFiles) {
+        /** @var Appwrite\Utopia\Response $response */
+        /** @var Utopia\Registry\Registry $register */
+        /** @var Utopia\Storage\Device $deviceFiles */
 
         $cache = $register->get('cache');
 

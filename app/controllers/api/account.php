@@ -105,8 +105,8 @@ App::post('/v1/account')
                 'name' => $name,
                 'prefs' => new \stdClass(),
                 'sessions' => [],
-                'tokens' => null,
-                'memberships' => null,
+                'tokens' => [],
+                'memberships' => [],
                 'search' => implode(' ', [$userId, $email, $name]),
                 'deleted' => false
             ])));
@@ -263,7 +263,7 @@ App::get('/v1/account/sessions/oauth2/:provider')
     ->param('provider', '', new WhiteList(\array_keys(Config::getParam('providers')), true), 'OAuth2 Provider. Currently, supported providers are: ' . \implode(', ', \array_keys(\array_filter(Config::getParam('providers'), function($node) {return (!$node['mock']);}))).'.')
     ->param('success', '', function ($clients) { return new Host($clients); }, 'URL to redirect back to your app after a successful login attempt.  Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an [open redirect](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.', true, ['clients'])
     ->param('failure', '', function ($clients) { return new Host($clients); }, 'URL to redirect back to your app after a failed login attempt.  Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an [open redirect](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.', true, ['clients'])
-    ->param('scopes', [], new ArrayList(new Text(128), APP_LIMIT_ARRAY_PARAMS_SIZE), 'A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes. Maximum of ' . APP_LIMIT_ARRAY_PARAMS_SIZE . ' scopes are allowed, each 128 characters long.', true)
+    ->param('scopes', [], new ArrayList(new Text(128)), 'A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes.', true)
     ->inject('request')
     ->inject('response')
     ->inject('project')
@@ -274,8 +274,8 @@ App::get('/v1/account/sessions/oauth2/:provider')
 
         $protocol = $request->getProtocol();
         $callback = $protocol.'://'.$request->getHostname().'/v1/account/sessions/oauth2/callback/'.$provider.'/'.$project->getId();
-        $appId = $project->getAttribute('authProviders', [])[$provider.'Appid'] ?? '';
-        $appSecret = $project->getAttribute('authProviders', [])[$provider.'Secret'] ?? '{}';
+        $appId = $project->getAttribute('providers', [])[$provider.'Appid'] ?? '';
+        $appSecret = $project->getAttribute('providers', [])[$provider.'Secret'] ?? '{}';
 
         if (!empty($appSecret) && isset($appSecret['version'])) {
             $key = App::getEnv('_APP_OPENSSL_KEY_V' . $appSecret['version']);
@@ -396,8 +396,8 @@ App::get('/v1/account/sessions/oauth2/:provider/redirect')
         $callback = $protocol . '://' . $request->getHostname() . '/v1/account/sessions/oauth2/callback/' . $provider . '/' . $project->getId();
         $defaultState = ['success' => $project->getAttribute('url', ''), 'failure' => ''];
         $validateURL = new URL();
-        $appId = $project->getAttribute('authProviders', [])[$provider.'Appid'] ?? '';
-        $appSecret = $project->getAttribute('authProviders', [])[$provider.'Secret'] ?? '{}';
+        $appId = $project->getAttribute('providers', [])[$provider.'Appid'] ?? '';
+        $appSecret = $project->getAttribute('providers', [])[$provider.'Secret'] ?? '{}';
 
         if (!empty($appSecret) && isset($appSecret['version'])) {
             $key = App::getEnv('_APP_OPENSSL_KEY_V' . $appSecret['version']);
@@ -506,8 +506,8 @@ App::get('/v1/account/sessions/oauth2/:provider/redirect')
                         'name' => $name,
                         'prefs' => new \stdClass(),
                         'sessions' => [],
-                        'tokens' => null,
-                        'memberships' => null,
+                        'tokens' => [],
+                        'memberships' => [],
                         'search' => implode(' ', [$userId, $email, $name]),
                         'deleted' => false
                     ])));
@@ -675,13 +675,13 @@ App::post('/v1/account/sessions/magic-url')
                 'emailVerification' => false,
                 'status' => true,
                 'password' => null,
-                'passwordUpdate' => 0,
+                'passwordUpdate' => \time(),
                 'registration' => \time(),
                 'reset' => false,
                 'prefs' => new \stdClass(),
                 'sessions' => [],
-                'tokens' => null,
-                'memberships' => null,
+                'tokens' => [],
+                'memberships' => [],
                 'search' => implode(' ', [$userId, $email]),
                 'deleted' => false
             ])));
@@ -706,12 +706,13 @@ App::post('/v1/account/sessions/magic-url')
 
         Authorization::setRole('user:'.$user->getId());
 
-        $token = $dbForProject->createDocument('tokens', $token
-            ->setAttribute('$read', ['user:'.$user->getId()])
-            ->setAttribute('$write', ['user:'.$user->getId()])
-        );
+        $user->setAttribute('tokens', $token, Document::SET_TYPE_APPEND);
 
-        $dbForProject->deleteCachedDocument('users', $user->getId());
+        $user = $dbForProject->updateDocument('users', $user->getId(), $user);
+
+        if (false === $user) {
+            throw new Exception('Failed to save user to DB', 500, Exception::GENERAL_SERVER_ERROR);
+        }
 
         if(empty($url)) {
             $url = $request->getProtocol().'://'.$request->getHostname().'/auth/magic-url';
@@ -785,7 +786,7 @@ App::put('/v1/account/sessions/magic-url')
         /** @var MaxMind\Db\Reader $geodb */
         /** @var Appwrite\Event\Event $audits */
 
-        $user = Authorization::skip(fn() => $dbForProject->getDocument('users', $userId));
+        $user = $dbForProject->getDocument('users', $userId);
 
         if ($user->isEmpty() || $user->getAttribute('deleted')) {
             throw new Exception('User not found', 404, Exception::USER_NOT_FOUND);
@@ -824,14 +825,24 @@ App::put('/v1/account/sessions/magic-url')
                 ->setAttribute('$write', ['user:' . $user->getId()])
         );
 
+        $tokens = $user->getAttribute('tokens', []);
+
         /**
          * We act like we're updating and validating
          *  the recovery token but actually we don't need it anymore.
          */
-        $dbForProject->deleteDocument('tokens', $token);
-        $dbForProject->deleteCachedDocument('users', $user->getId());
+        foreach ($tokens as $key => $singleToken) {
+            if ($token === $singleToken->getId()) {
+                unset($tokens[$key]);
+            }
+        }
 
-        $user = $dbForProject->updateDocument('users', $user->getId(), $user->setAttribute('sessions', $session, Document::SET_TYPE_APPEND));
+        $user
+            ->setAttribute('sessions', $session, Document::SET_TYPE_APPEND)
+            ->setAttribute('tokens', $tokens);
+
+
+        $user = $dbForProject->updateDocument('users', $user->getId(), $user);
 
         if (false === $user) {
             throw new Exception('Failed saving user to DB', 500, Exception::GENERAL_SERVER_ERROR);
@@ -935,14 +946,14 @@ App::post('/v1/account/sessions/anonymous')
             'emailVerification' => false,
             'status' => true,
             'password' => null,
-            'passwordUpdate' => 0,
+            'passwordUpdate' => \time(),
             'registration' => \time(),
             'reset' => false,
             'name' => null,
             'prefs' => new \stdClass(),
             'sessions' => [],
-            'tokens' => null,
-            'memberships' => null,
+            'tokens' => [],
+            'memberships' => [],
             'search' => $userId,
             'deleted' => false
         ])));
@@ -1699,8 +1710,8 @@ App::patch('/v1/account/sessions/:sessionId')
                 $provider = $session->getAttribute('provider');
                 $refreshToken = $session->getAttribute('providerRefreshToken');
 
-                $appId = $project->getAttribute('authProviders', [])[$provider.'Appid'] ?? '';
-                $appSecret = $project->getAttribute('authProviders', [])[$provider.'Secret'] ?? '{}';
+                $appId = $project->getAttribute('providers', [])[$provider.'Appid'] ?? '';
+                $appSecret = $project->getAttribute('providers', [])[$provider.'Secret'] ?? '{}';
 
                 $className = 'Appwrite\\Auth\\OAuth2\\'.\ucfirst($provider);
              
@@ -1895,12 +1906,9 @@ App::post('/v1/account/recovery')
 
         Authorization::setRole('user:' . $profile->getId());
 
-        $recovery = $dbForProject->createDocument('tokens', $recovery
-            ->setAttribute('$read', ['user:'.$profile->getId()])
-            ->setAttribute('$write', ['user:'.$profile->getId()])
-        );
+        $profile->setAttribute('tokens', $recovery, Document::SET_TYPE_APPEND);
 
-        $dbForProject->deleteCachedDocument('users', $profile->getId());
+        $profile = $dbForProject->updateDocument('users', $profile->getId(), $profile);
 
         $url = Template::parseURL($url);
         $url['query'] = Template::mergeQuery(((isset($url['query'])) ? $url['query'] : ''), ['userId' => $profile->getId(), 'secret' => $secret, 'expire' => $expire]);
@@ -1995,14 +2003,18 @@ App::put('/v1/account/recovery')
                 ->setAttribute('emailVerification', true)
         );
 
-        $recoveryDocument = $dbForProject->getDocument('tokens', $recovery);
-
         /**
          * We act like we're updating and validating
          *  the recovery token but actually we don't need it anymore.
          */
-        $dbForProject->deleteDocument('tokens', $recovery);
-        $dbForProject->deleteCachedDocument('users', $profile->getId());
+        foreach ($tokens as $key => $token) {
+            if ($recovery === $token->getId()) {
+                $recovery = $token;
+                unset($tokens[$key]);
+            }
+        }
+
+        $dbForProject->updateDocument('users', $profile->getId(), $profile->setAttribute('tokens', $tokens));
 
         $audits
             ->setParam('userId', $profile->getId())
@@ -2013,7 +2025,7 @@ App::put('/v1/account/recovery')
         $usage
             ->setParam('users.update', 1)
         ;
-        $response->dynamic($recoveryDocument, Response::MODEL_TOKEN);
+        $response->dynamic($recovery, Response::MODEL_TOKEN);
     });
 
 App::post('/v1/account/verification')
@@ -2077,12 +2089,9 @@ App::post('/v1/account/verification')
 
         Authorization::setRole('user:' . $user->getId());
 
-        $verification = $dbForProject->createDocument('tokens', $verification
-            ->setAttribute('$read', ['user:'.$user->getId()])
-            ->setAttribute('$write', ['user:'.$user->getId()])
-        );
+        $user->setAttribute('tokens', $verification, Document::SET_TYPE_APPEND);
 
-        $dbForProject->deleteCachedDocument('users', $user->getId());
+        $user = $dbForProject->updateDocument('users', $user->getId(), $user);
 
         $url = Template::parseURL($url);
         $url['query'] = Template::mergeQuery(((isset($url['query'])) ? $url['query'] : ''), ['userId' => $user->getId(), 'secret' => $verificationSecret, 'expire' => $expire]);
@@ -2152,7 +2161,7 @@ App::put('/v1/account/verification')
         /** @var Appwrite\Event\Event $audits */
         /** @var Appwrite\Stats\Stats $usage */
 
-        $profile = Authorization::skip(fn() => $dbForProject->getDocument('users', $userId));
+        $profile = $dbForProject->getDocument('users', $userId);
 
         if ($profile->isEmpty()) {
             throw new Exception('User not found', 404, Exception::USER_NOT_FOUND);
@@ -2168,15 +2177,19 @@ App::put('/v1/account/verification')
         Authorization::setRole('user:' . $profile->getId());
 
         $profile = $dbForProject->updateDocument('users', $profile->getId(), $profile->setAttribute('emailVerification', true));
-        
-        $verificationDocument = $dbForProject->getDocument('tokens', $verification);
 
         /**
          * We act like we're updating and validating
          *  the verification token but actually we don't need it anymore.
          */
-        $dbForProject->deleteDocument('tokens', $verification);
-        $dbForProject->deleteCachedDocument('users', $profile->getId());
+        foreach ($tokens as $key => $token) {
+            if ($token->getId() === $verification) {
+                $verification = $token;
+                unset($tokens[$key]);
+            }
+        }
+
+        $dbForProject->updateDocument('users', $profile->getId(), $profile->setAttribute('tokens', $tokens));
 
         $audits
             ->setParam('userId', $profile->getId())
@@ -2187,5 +2200,5 @@ App::put('/v1/account/verification')
         $usage
             ->setParam('users.update', 1)
         ;
-        $response->dynamic($verificationDocument, Response::MODEL_TOKEN);
+        $response->dynamic($verification, Response::MODEL_TOKEN);
     });

@@ -88,8 +88,6 @@ services:
       - _APP_FUNCTIONS_CPUS
       - _APP_FUNCTIONS_MEMORY
       - _APP_FUNCTIONS_MEMORY_SWAP
-      - _APP_EXECUTOR_HOST
-      - _APP_FEATURE_PERMISSIONS_UNRESTRICTED
 
   appwrite-worker-usage:
     entrypoint: worker-usage
@@ -195,7 +193,6 @@ services:
       - _APP_DB_SCHEMA
       - _APP_DB_USER
       - _APP_DB_PASS
-      - _APP_EXECUTOR_HOST
 
   appwrite-worker-certificates:
     entrypoint: worker-certificates
@@ -250,7 +247,6 @@ services:
       - _APP_FUNCTIONS_CPUS
       - _APP_FUNCTIONS_MEMORY
       - _APP_FUNCTIONS_MEMORY_SWAP
-      - _APP_EXECUTOR_HOST
 
   appwrite-worker-mails:
     entrypoint: worker-mails
@@ -298,7 +294,6 @@ services:
       - _APP_LOGGING_PROVIDER
       - _APP_LOGGING_CONFIG
       - _APP_EXECUTOR_SECRET
-      - _APP_EXECUTOR_HOST
 
   appwrite-schedule:
     entrypoint: schedule

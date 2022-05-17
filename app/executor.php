@@ -138,17 +138,19 @@ App::post('/v1/runtimes')
     ->param('runtimeId', '', new Text(64), 'Unique runtime ID.')
     ->param('source', '', new Text(0), 'Path to source files.')
     ->param('destination', '', new Text(0), 'Destination folder to store build files into.', true)
-    ->param('vars', [], new Assoc(), 'Environment Variables required for the build.')
-    ->param('commands', [], new ArrayList(new Text(1024), 100), 'Commands required to build the container. Maximum of 100 commands are allowed, each 1024 characters long.')
-    ->param('runtime', '', new Text(128), 'Runtime for the cloud function.')
-    ->param('baseImage', '', new Text(128), 'Base image name of the runtime.')
-    ->param('entrypoint', '', new Text(256), 'Entrypoint of the code file.', true)
-    ->param('remove', false, new Boolean(), 'Remove a runtime after execution.')
-    ->param('workdir', '', new Text(256), 'Working directory.', true)
+    ->param('vars', [], new Assoc(), 'Environment Variables required for the build')
+    ->param('commands', [], new ArrayList(new Text(0)), 'Commands required to build the container')
+    ->param('runtime', '', new Text(128), 'Runtime for the cloud function')
+    ->param('network', '', new Text(128), 'Network to attach the container to')
+    ->param('baseImage', '', new Text(128), 'Base image name of the runtime')
+    ->param('entrypoint', '', new Text(256), 'Entrypoint of the code file', true)
+    ->param('remove', false, new Boolean(), 'Remove a runtime after execution')
+    ->param('workdir', '', new Text(256), 'Working directory', true)
     ->inject('orchestrationPool')
     ->inject('activeRuntimes')
     ->inject('response')
-    ->action(function (string $runtimeId, string $source, string $destination, array $vars, array $commands, string $runtime, string $baseImage, string $entrypoint, bool $remove, string $workdir, $orchestrationPool, $activeRuntimes, Response $response) {
+    ->action(function (string $runtimeId, string $source, string $destination, array $vars, array $commands, string $runtime, string $network, string $baseImage, string $entrypoint, bool $remove, string $workdir, $orchestrationPool, $activeRuntimes, Response $response) {
+
         if ($activeRuntimes->exists($runtimeId)) {
             throw new Exception('Runtime already exists.', 409);
         }
@@ -200,9 +202,8 @@ App::post('/v1/runtimes')
             $vars = array_map(fn ($v) => strval($v), $vars);
             $orchestration
                 ->setCpus((int) App::getEnv('_APP_FUNCTIONS_CPUS', 0))
-                //->setMemory((int) App::getEnv('_APP_FUNCTIONS_MEMORY', 0))
-                //->setSwap((int) App::getEnv('_APP_FUNCTIONS_MEMORY_SWAP', 0))
-            ;
+                ->setMemory((int) App::getEnv('_APP_FUNCTIONS_MEMORY', 0))
+                ->setSwap((int) App::getEnv('_APP_FUNCTIONS_MEMORY_SWAP', 0));
             
             /** Keep the container alive if we have commands to be executed */
             $entrypoint = !empty($commands) ? [
@@ -234,7 +235,9 @@ App::post('/v1/runtimes')
                 throw new Exception('Failed to create build container', 500);
             }
 
-            $orchestration->networkConnect($runtimeId, App::getEnv('OPEN_RUNTIMES_NETWORK', 'appwrite_runtimes'));
+            if (!empty($network)) {
+                $orchestration->networkConnect($runtimeId, $network);
+            }
 
             /** 
              * Execute any commands if they were provided
@@ -280,8 +283,8 @@ App::post('/v1/runtimes')
             $endTime = \time();
             $container = array_merge($container, [
                 'status' => 'ready',
-                'stdout' => \mb_strcut($stdout, 0, 1000000), // Limit to 1MB
-                'stderr' => \mb_strcut($stderr, 0, 1000000), // Limit to 1MB
+                'stdout' => \utf8_encode($stdout),
+                'stderr' => \utf8_encode($stderr),
                 'startTime' => $startTime,
                 'endTime' => $endTime,
                 'duration' => $endTime - $startTime,
@@ -407,8 +410,8 @@ App::delete('/v1/runtimes/:runtimeId')
 
 App::post('/v1/execution')
     ->desc('Create an execution')
-    ->param('runtimeId', '', new Text(64), 'The runtimeID to execute.')
-    ->param('vars', [], new Assoc(), 'Environment variables required for the build.')
+    ->param('runtimeId', '', new Text(64), 'The runtimeID to execute')
+    ->param('vars', [], new Assoc(), 'Environment variables required for the build')
     ->param('data', '{}', new Text(8192), 'Data to be forwarded to the function, this is user specified.', true)
     ->param('timeout', 15, new Range(1, (int) App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900)), 'Function maximum execution time in seconds.')
     ->inject('activeRuntimes')
@@ -509,12 +512,12 @@ App::post('/v1/execution')
             $functionStatus = ($statusCode >= 200 && $statusCode < 300) ? 'completed' : 'failed';
         
             Console::success('Function executed in ' . $executionTime . ' seconds, status: ' . $functionStatus);
-
+        
             $execution = [
                 'status' => $functionStatus,
                 'statusCode' => $statusCode,
-                'stdout' => \mb_strcut($stdout, 0, 1000000), // Limit to 1MB
-                'stderr' => \mb_strcut($stderr, 0, 1000000), // Limit to 1MB
+                'stdout' => \utf8_encode(\mb_substr($stdout, -16384)),
+                'stderr' => \utf8_encode(\mb_substr($stderr, -16384)),
                 'time' => $executionTime,
             ];
 

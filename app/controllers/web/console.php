@@ -227,10 +227,7 @@ App::get('/console/database/collection')
 
         $page = new View(__DIR__.'/../../views/console/database/collection.phtml');
         
-        $page
-            ->setParam('logs', $logs)
-            ->setParam('unrestrictedFeature', App::getEnv('_APP_FEATURE_PERMISSIONS_UNRESTRICTED','disabled'))
-        ;
+        $page->setParam('logs', $logs);
         
         $layout
             ->setParam('title', APP_NAME.' - Database Collection')
@@ -335,7 +332,6 @@ App::get('/console/storage/bucket')
             ->setParam('home', App::getEnv('_APP_HOME', 0))
             ->setParam('fileLimit', App::getEnv('_APP_STORAGE_LIMIT', 0))
             ->setParam('fileLimitHuman', Storage::human(App::getEnv('_APP_STORAGE_LIMIT', 0)))
-            ->setParam('unrestrictedFeature', App::getEnv('_APP_FEATURE_PERMISSIONS_UNRESTRICTED', 'disabled'))
         ;
         
         $layout

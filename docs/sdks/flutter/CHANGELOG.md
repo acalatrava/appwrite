@@ -1,6 +1,3 @@
-## 4.0.2
-* Upgrade dependencies
-
 ## 4.0.1
 * Fix InputFile filename param
 * Fix examples

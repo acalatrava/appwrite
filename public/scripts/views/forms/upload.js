@@ -55,12 +55,6 @@
       };
 
       var render = function(result) {
-        try {
-          result = JSON.parse(result);
-        } catch(err) {
-          // Not JSON = empty string. No image
-
-        }
         preview.innerHTML = "";
 
         count.innerHTML = "0 / " + max;
@@ -103,7 +97,7 @@
         file.addEventListener("click", remove);
         file.addEventListener("keypress", remove);
 
-        element.value = JSON.stringify(result);
+        element.value = result;
       };
 
       input.addEventListener("change", function() {

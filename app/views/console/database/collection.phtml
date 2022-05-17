@@ -1,7 +1,6 @@
 <?php
 
 $logs = $this->getParam('logs', null);
-$unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
 
 ?>
 <div
@@ -555,17 +554,6 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
                                     </div>
                                 </div>
 
-                                <?php if ($unrestrictedFeature == 'enabled') {?>
-                                    <div class="row" >
-                                        <div class="col span-1"><input name="permission" value="document-unrestricted" type="radio" class="margin-top-no" data-ls-bind="{{project-collection.permission}}" /></div>
-                                        <div class="col span-11">
-                                            <b>Document Level (unrestricted mode)</b>
-                                            <p class="text-fade margin-top-tiny">With Document Level (unrestricted) permissions, you have the same granular access control over every document as in normal/restricted mode but users can grant permissions to anyone no matter if they are member of the same group or not. So you can grant permissions to any user using the 'user:userID' scope.</p>
-                                            <p class="text-fade margin-top-tiny">In this permission level, document permissions take precedence and collection permissions are ignored.</p>
-                                        </div>
-                                    </div>
-                                <?php }?>
-
                                 <hr class="margin-top-no" />
 
                                 <button>Update</button>
@@ -1052,7 +1040,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
             <div data-forms-clone="" data-label="Add Element" data-target="elements-section" data-first="1">
                 <div class="row responsive thin margin-bottom-tiny">
                     <div class="col span-11 margin-bottom-small">
-                        <input data-cast-to="array" type="text" class="full-width" name="elements" required autocomplete="off" maxlength="128" />
+                        <input type="text" class="full-width" name="elements" required autocomplete="off" maxlength="128" />
                     </div>
                     <div class="col span-1 margin-bottom-small">
                         <button type="button" data-remove class="dark danger small round pull-end" style="margin-top: 10px;"><i class="icon-cancel"></i></button>

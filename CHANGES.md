@@ -1,6 +1,3 @@
-# Unreleased Version
-- Renamed `providers` to `authProviders` in project collection **Breaking Change**
-
 # Version 0.13.4
 
 ## Features

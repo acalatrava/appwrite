@@ -1,10 +1,3 @@
-x-logging: &x-logging
-  logging:
-    driver: 'json-file'
-    options:
-      max-file: 5
-      max-size: 10m
-
 <?php
 
 $httpPort = $this->getParam('httpPort', '');
@@ -43,7 +36,6 @@ services:
   appwrite:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     container_name: appwrite
-    <<: *x-logging
     restart: unless-stopped
     networks:
       - appwrite
@@ -106,7 +98,6 @@ services:
       - _APP_INFLUXDB_HOST
       - _APP_INFLUXDB_PORT
       - _APP_STORAGE_LIMIT
-      - _APP_STORAGE_PREVIEW_LIMIT
       - _APP_STORAGE_ANTIVIRUS
       - _APP_STORAGE_ANTIVIRUS_HOST
       - _APP_STORAGE_ANTIVIRUS_PORT
@@ -128,7 +119,6 @@ services:
       - _APP_FUNCTIONS_MEMORY_SWAP
       - _APP_FUNCTIONS_RUNTIMES
       - _APP_EXECUTOR_SECRET
-      - _APP_EXECUTOR_HOST
       - _APP_LOGGING_PROVIDER
       - _APP_LOGGING_CONFIG
       - _APP_STATSD_HOST
@@ -137,13 +127,11 @@ services:
       - _APP_MAINTENANCE_RETENTION_EXECUTION
       - _APP_MAINTENANCE_RETENTION_ABUSE
       - _APP_MAINTENANCE_RETENTION_AUDIT
-      - _APP_FEATURE_PERMISSIONS_UNRESTRICTED
 
   appwrite-realtime:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: realtime
     container_name: appwrite-realtime
-    <<: *x-logging
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -184,7 +172,6 @@ services:
   appwrite-worker-audits:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: worker-audits
-    <<: *x-logging
     container_name: appwrite-worker-audits
     restart: unless-stopped
     networks:
@@ -210,7 +197,6 @@ services:
   appwrite-worker-webhooks:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: worker-webhooks
-    <<: *x-logging
     container_name: appwrite-worker-webhooks
     restart: unless-stopped
     networks:
@@ -232,7 +218,6 @@ services:
   appwrite-worker-deletes:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: worker-deletes
-    <<: *x-logging
     container_name: appwrite-worker-deletes
     restart: unless-stopped
     networks:
@@ -270,12 +255,10 @@ services:
       - _APP_LOGGING_PROVIDER
       - _APP_LOGGING_CONFIG
       - _APP_EXECUTOR_SECRET
-      - _APP_EXECUTOR_HOST
 
   appwrite-worker-database:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: worker-database
-    <<: *x-logging
     container_name: appwrite-worker-database
     restart: unless-stopped
     networks:
@@ -301,7 +284,6 @@ services:
   appwrite-worker-builds:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: worker-builds
-    <<: *x-logging
     container_name: appwrite-worker-builds
     restart: unless-stopped
     networks:
@@ -313,7 +295,6 @@ services:
       - _APP_ENV
       - _APP_OPENSSL_KEY_V1
       - _APP_EXECUTOR_SECRET
-      - _APP_EXECUTOR_HOST
       - _APP_REDIS_HOST
       - _APP_REDIS_PORT
       - _APP_REDIS_USER
@@ -329,7 +310,6 @@ services:
   appwrite-worker-certificates:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: worker-certificates
-    <<: *x-logging
     container_name: appwrite-worker-certificates
     restart: unless-stopped
     networks:
@@ -360,7 +340,6 @@ services:
   appwrite-worker-functions:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: worker-functions
-    <<: *x-logging
     container_name: appwrite-worker-functions
     restart: unless-stopped
     networks:
@@ -383,7 +362,6 @@ services:
       - _APP_DB_PASS
       - _APP_FUNCTIONS_TIMEOUT
       - _APP_EXECUTOR_SECRET
-      - _APP_EXECUTOR_HOST
       - _APP_USAGE_STATS
       - DOCKERHUB_PULL_USERNAME
       - DOCKERHUB_PULL_PASSWORD
@@ -391,7 +369,6 @@ services:
   appwrite-executor:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: executor
-    <<: *x-logging
     container_name: appwrite-executor
     restart: unless-stopped
     stop_signal: SIGINT
@@ -419,7 +396,7 @@ services:
       - _APP_FUNCTIONS_MEMORY_SWAP
       - _APP_FUNCTIONS_INACTIVE_THRESHOLD
       - _APP_EXECUTOR_SECRET
-      - OPEN_RUNTIMES_NETWORK
+      - _APP_EXECUTOR_RUNTIME_NETWORK
       - _APP_LOGGING_PROVIDER
       - _APP_LOGGING_CONFIG
       - _APP_STORAGE_DEVICE
@@ -437,7 +414,6 @@ services:
   appwrite-worker-mails:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: worker-mails
-    <<: *x-logging
     container_name: appwrite-worker-mails
     restart: unless-stopped
     networks:
@@ -464,7 +440,6 @@ services:
   appwrite-maintenance:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: maintenance
-    <<: *x-logging
     container_name: appwrite-maintenance
     restart: unless-stopped
     networks:
@@ -487,7 +462,6 @@ services:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: usage
     container_name: appwrite-usage
-    <<: *x-logging
     restart: unless-stopped
     networks:
       - appwrite
@@ -514,7 +488,6 @@ services:
     image: <?php echo $organization; ?>/<?php echo $image; ?>:<?php echo $version."\n"; ?>
     entrypoint: schedule
     container_name: appwrite-schedule
-    <<: *x-logging
     restart: unless-stopped
     networks:
       - appwrite
@@ -530,7 +503,6 @@ services:
   mariadb:
     image: mariadb:10.7 # fix issues when upgrading using: mysql_upgrade -u root -p
     container_name: appwrite-mariadb
-    <<: *x-logging
     restart: unless-stopped
     networks:
       - appwrite
@@ -546,7 +518,6 @@ services:
   redis:
     image: redis:6.2-alpine
     container_name: appwrite-redis
-    <<: *x-logging
     restart: unless-stopped
     networks:
       - appwrite
@@ -565,7 +536,6 @@ services:
   influxdb:
     image: appwrite/influxdb:1.5.0
     container_name: appwrite-influxdb
-    <<: *x-logging
     restart: unless-stopped
     networks:
       - appwrite
@@ -575,7 +545,6 @@ services:
   telegraf:
     image: appwrite/telegraf:1.4.0
     container_name: appwrite-telegraf
-    <<: *x-logging
     restart: unless-stopped
     networks:
       - appwrite
