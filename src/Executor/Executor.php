@@ -6,7 +6,7 @@ use Exception;
 use Utopia\App;
 use Utopia\CLI\Console;
 
-class Executor 
+class Executor
 {
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
@@ -26,8 +26,11 @@ class Executor
         'content-type' => '',
     ];
 
-    public function __construct(string $endpoint = 'http://appwrite-executor/v1')
-    { 
+    public function __construct(string $endpoint)
+    {
+        if (!filter_var($endpoint, FILTER_VALIDATE_URL)) {
+            throw new Exception('Unsupported endpoint');
+        }
         $this->endpoint = $endpoint;
     }
 
@@ -59,7 +62,6 @@ class Executor
         string $entrypoint = '',
         string $workdir = '',
         string $destination = '',
-        string $network = '',
         array $vars = [],
         array $commands = []
     ) {
@@ -76,13 +78,14 @@ class Executor
             'baseImage' => $baseImage,
             'entrypoint' => $entrypoint,
             'workdir' => $workdir,
-            'network' => empty($network) ? App::getEnv('_APP_EXECUTOR_RUNTIME_NETWORK', 'appwrite_runtimes') : $network,
             'vars' => $vars,
             'remove' => $remove,
             'commands' => $commands
         ];
 
-        $response = $this->call(self::METHOD_POST, $route, $headers, $params, true, App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900));
+        $timeout  = (int) App::getEnv('_APP_FUNCTIONS_BUILD_TIMEOUT', 900);
+
+        $response = $this->call(self::METHOD_POST, $route, $headers, $params, true, $timeout);
 
         $status = $response['headers']['status-code'];
         if ($status >= 400) {
@@ -159,13 +162,18 @@ class Executor
             'timeout' => $timeout,
         ];
 
-        $response = $this->call(self::METHOD_POST, $route, $headers, $params, true, 30);
+        /* Add 2 seconds as a buffer to the actual timeout value since there can be a slight variance*/
+        $requestTimeout  = $timeout + 2;
+
+        $response = $this->call(self::METHOD_POST, $route, $headers, $params, true, $requestTimeout);
         $status = $response['headers']['status-code'];
 
-        if ($status >= 400) {
-            for ($attempts = 0; $attempts < 10; $attempts++) {
-                switch ($status) {
-                    case 404:
+        for ($attempts = 0; $attempts < 10; $attempts++) {
+            try {
+                switch (true) {
+                    case $status < 400:
+                        return $response['body'];
+                    case $status === 404:
                         $response = $this->createRuntime(
                             deploymentId: $deploymentId,
                             projectId: $projectId,
@@ -176,31 +184,23 @@ class Executor
                             entrypoint: $entrypoint,
                             commands: []
                         );
-                        $response = $this->call(self::METHOD_POST, $route, $headers, $params, true, 30);
+                        $response = $this->call(self::METHOD_POST, $route, $headers, $params, true, $requestTimeout);
                         $status = $response['headers']['status-code'];
                         break;
-                    case 406:
-                        $response = $this->call(self::METHOD_POST, $route, $headers, $params, true, 30);
+                    case $status === 406:
+                        $response = $this->call(self::METHOD_POST, $route, $headers, $params, true, $requestTimeout);
                         $status = $response['headers']['status-code'];
                         break;
                     default:
                         throw new \Exception($response['body']['message'], $status);
                 }
-
-                if ($status < 400) {
-                    return $response['body'];
-                }
-                
-                if ($status != 406) {
-                    throw new \Exception($response['body']['message'], $status);
-                }
-
-                sleep(2);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage(), $e->getCode());
             }
-            throw new Exception($response['body']['message'], 503);
+            sleep(2);
         }
 
-        return $response['body'];
+        throw new Exception($response['body']['message'], 503);
     }
 
     /**

@@ -27,7 +27,7 @@ App::get('/v1/mock/tests/foo')
     ->label('sdk.mock', true)
     ->param('x', '', new Text(100), 'Sample string param')
     ->param('y', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($x, $y, $z) {
     });
 
@@ -45,7 +45,7 @@ App::post('/v1/mock/tests/foo')
     ->label('sdk.mock', true)
     ->param('x', '', new Text(100), 'Sample string param')
     ->param('y', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($x, $y, $z) {
     });
 
@@ -63,7 +63,7 @@ App::patch('/v1/mock/tests/foo')
     ->label('sdk.mock', true)
     ->param('x', '', new Text(100), 'Sample string param')
     ->param('y', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($x, $y, $z) {
     });
 
@@ -81,7 +81,7 @@ App::put('/v1/mock/tests/foo')
     ->label('sdk.mock', true)
     ->param('x', '', new Text(100), 'Sample string param')
     ->param('y', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($x, $y, $z) {
     });
 
@@ -99,7 +99,7 @@ App::delete('/v1/mock/tests/foo')
     ->label('sdk.mock', true)
     ->param('x', '', new Text(100), 'Sample string param')
     ->param('y', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($x, $y, $z) {
     });
 
@@ -117,7 +117,7 @@ App::get('/v1/mock/tests/bar')
     ->label('sdk.mock', true)
     ->param('required', '', new Text(100), 'Sample string param')
     ->param('default', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($required, $default, $z) {
     });
 
@@ -135,7 +135,7 @@ App::post('/v1/mock/tests/bar')
     ->label('sdk.mock', true)
     ->param('required', '', new Text(100), 'Sample string param')
     ->param('default', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($required, $default, $z) {
     });
 
@@ -153,7 +153,7 @@ App::patch('/v1/mock/tests/bar')
     ->label('sdk.mock', true)
     ->param('required', '', new Text(100), 'Sample string param')
     ->param('default', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($required, $default, $z) {
     });
 
@@ -171,7 +171,7 @@ App::put('/v1/mock/tests/bar')
     ->label('sdk.mock', true)
     ->param('required', '', new Text(100), 'Sample string param')
     ->param('default', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($required, $default, $z) {
     });
 
@@ -189,7 +189,7 @@ App::delete('/v1/mock/tests/bar')
     ->label('sdk.mock', true)
     ->param('required', '', new Text(100), 'Sample string param')
     ->param('default', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->action(function ($required, $default, $z) {
     });
 
@@ -233,7 +233,7 @@ App::post('/v1/mock/tests/general/upload')
     ->label('sdk.mock', true)
     ->param('x', '', new Text(100), 'Sample string param')
     ->param('y', '', new Integer(true), 'Sample numeric param')
-    ->param('z', null, new ArrayList(new Text(256)), 'Sample array param')
+    ->param('z', null, new ArrayList(new Text(256), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Sample array param')
     ->param('file', [], new File(), 'Sample file param', false)
     ->inject('request')
     ->inject('response')
@@ -252,7 +252,7 @@ App::post('/v1/mock/tests/general/upload')
             $end = $request->getContentRangeEnd();
             $size = $request->getContentRangeSize();
             $id = $request->getHeader('x-appwrite-id', '');
-            $file['size'] = (\is_array($file['size'])) ? $file['size'] : [$file['size']];
+            $file['size'] = (\is_array($file['size'])) ? $file['size'][0] : $file['size'];
 
             if(is_null($start) || is_null($end) || is_null($size)) {
                 throw new Exception('Invalid content-range header', 400, Exception::GENERAL_MOCK);
@@ -274,15 +274,14 @@ App::post('/v1/mock/tests/general/upload')
                 throw new Exception('Chunk size must be 5MB (except last chunk)', 400, Exception::GENERAL_MOCK);
             }
 
-            foreach ($file['size'] as $i => $sz) {
-                if ($end !== $size && $sz !== $chunkSize) {
-                    throw new Exception('Wrong chunk size', 400, Exception::GENERAL_MOCK);
-                }
-                
-                if($sz > $chunkSize) {
-                    throw new Exception('Chunk size must be 5MB or less', 400, Exception::GENERAL_MOCK);
-                }
+            if ($end !== $size && $file['size'] !== $chunkSize) {
+                throw new Exception('Wrong chunk size', 400, Exception::GENERAL_MOCK);
             }
+            
+            if($file['size'] > $chunkSize) {
+                throw new Exception('Chunk size must be 5MB or less', 400, Exception::GENERAL_MOCK);
+            }
+
             if($end !== $size) {
                 $response->json([
                     '$id'=> 'newfileid',
@@ -291,26 +290,20 @@ App::post('/v1/mock/tests/general/upload')
                 ]);
             }
         } else {
-            $file['tmp_name'] = (\is_array($file['tmp_name'])) ? $file['tmp_name'] : [$file['tmp_name']];
-            $file['name'] = (\is_array($file['name'])) ? $file['name'] : [$file['name']];
-            $file['size'] = (\is_array($file['size'])) ? $file['size'] : [$file['size']];
+            $file['tmp_name'] = (\is_array($file['tmp_name'])) ? $file['tmp_name'][0] : $file['tmp_name'];
+            $file['name'] = (\is_array($file['name'])) ? $file['name'][0] : $file['name'];
+            $file['size'] = (\is_array($file['size'])) ? $file['size'][0] : $file['size'];
     
-            foreach ($file['name'] as $i => $name) {
-                if ($name !== 'file.png') {
-                    throw new Exception('Wrong file name', 400, Exception::GENERAL_MOCK);
-                }
+            if ($file['name'] !== 'file.png') {
+                throw new Exception('Wrong file name', 400, Exception::GENERAL_MOCK);
             }
     
-            foreach ($file['size'] as $i => $size) {
-                if ($size !== 38756) {
+            if ($file['size'] !== 38756) {
                     throw new Exception('Wrong file size', 400, Exception::GENERAL_MOCK);
-                }
             }
-    
-            foreach ($file['tmp_name'] as $i => $tmpName) {
-                if (\md5(\file_get_contents($tmpName)) !== 'd80e7e6999a3eb2ae0d631a96fe135a4') {
-                    throw new Exception('Wrong file uploaded', 400, Exception::GENERAL_MOCK);
-                }
+
+            if (\md5(\file_get_contents($file['tmp_name'])) !== 'd80e7e6999a3eb2ae0d631a96fe135a4') {
+                throw new Exception('Wrong file uploaded', 400, Exception::GENERAL_MOCK);
             }
         }
     });

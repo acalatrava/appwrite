@@ -25,14 +25,14 @@ use Utopia\Swoole\Response;
 use Utopia\Validator\ArrayList;
 use Utopia\Validator\Assoc;
 use Utopia\Validator\Boolean;
-use Utopia\Validator\Range as ValidatorRange;
+use Utopia\Validator\Range;
 use Utopia\Validator\Text;
 
 
 Runtime::enableCoroutine(true, SWOOLE_HOOK_ALL);
 
 /** Constants */
-const MAINTENANCE_INTERVAL = 1200; // 20 minutes
+const MAINTENANCE_INTERVAL = 3600; // 3600 seconds = 1 hour
 
 /**
 * Create a Swoole table to store runtime information 
@@ -95,6 +95,7 @@ function logError(Throwable $error, string $action, Utopia\Route $route = null)
         $log->addExtra('file', $error->getFile());
         $log->addExtra('line', $error->getLine());
         $log->addExtra('trace', $error->getTraceAsString());
+        $log->addExtra('detailedTrace', $error->getTrace());
 
         $log->setAction($action);
 
@@ -137,19 +138,17 @@ App::post('/v1/runtimes')
     ->param('runtimeId', '', new Text(64), 'Unique runtime ID.')
     ->param('source', '', new Text(0), 'Path to source files.')
     ->param('destination', '', new Text(0), 'Destination folder to store build files into.', true)
-    ->param('vars', [], new Assoc(), 'Environment Variables required for the build')
-    ->param('commands', [], new ArrayList(new Text(0)), 'Commands required to build the container')
-    ->param('runtime', '', new Text(128), 'Runtime for the cloud function')
-    ->param('network', '', new Text(128), 'Network to attach the container to')
-    ->param('baseImage', '', new Text(128), 'Base image name of the runtime')
-    ->param('entrypoint', '', new Text(256), 'Entrypoint of the code file', true)
-    ->param('remove', false, new Boolean(), 'Remove a runtime after execution')
-    ->param('workdir', '', new Text(256), 'Working directory', true)
+    ->param('vars', [], new Assoc(), 'Environment Variables required for the build.')
+    ->param('commands', [], new ArrayList(new Text(1024), 100), 'Commands required to build the container. Maximum of 100 commands are allowed, each 1024 characters long.')
+    ->param('runtime', '', new Text(128), 'Runtime for the cloud function.')
+    ->param('baseImage', '', new Text(128), 'Base image name of the runtime.')
+    ->param('entrypoint', '', new Text(256), 'Entrypoint of the code file.', true)
+    ->param('remove', false, new Boolean(), 'Remove a runtime after execution.')
+    ->param('workdir', '', new Text(256), 'Working directory.', true)
     ->inject('orchestrationPool')
     ->inject('activeRuntimes')
     ->inject('response')
-    ->action(function (string $runtimeId, string $source, string $destination, array $vars, array $commands, string $runtime, string $network, string $baseImage, string $entrypoint, bool $remove, string $workdir, $orchestrationPool, $activeRuntimes, Response $response) {
-
+    ->action(function (string $runtimeId, string $source, string $destination, array $vars, array $commands, string $runtime, string $baseImage, string $entrypoint, bool $remove, string $workdir, $orchestrationPool, $activeRuntimes, Response $response) {
         if ($activeRuntimes->exists($runtimeId)) {
             throw new Exception('Runtime already exists.', 409);
         }
@@ -235,9 +234,7 @@ App::post('/v1/runtimes')
                 throw new Exception('Failed to create build container', 500);
             }
 
-            if (!empty($network)) {
-                $orchestration->networkConnect($runtimeId, $network);
-            }
+            $orchestration->networkConnect($runtimeId, App::getEnv('OPEN_RUNTIMES_NETWORK', 'appwrite_runtimes'));
 
             /** 
              * Execute any commands if they were provided
@@ -283,8 +280,8 @@ App::post('/v1/runtimes')
             $endTime = \time();
             $container = array_merge($container, [
                 'status' => 'ready',
-                'stdout' => \utf8_encode($stdout),
-                'stderr' => \utf8_encode($stderr),
+                'stdout' => \mb_strcut($stdout, 0, 1000000), // Limit to 1MB
+                'stderr' => \mb_strcut($stderr, 0, 1000000), // Limit to 1MB
                 'startTime' => $startTime,
                 'endTime' => $endTime,
                 'duration' => $endTime - $startTime,
@@ -307,9 +304,24 @@ App::post('/v1/runtimes')
             Console::error('Build failed: ' . $th->getMessage() . $stdout);
             throw new Exception($th->getMessage() . $stdout, 500);
         } finally {
-            if (!empty($containerId) && $remove) {
-                $orchestration->remove($containerId, true);
+            // Container cleanup
+            if($remove) {
+                if (!empty($containerId)) {
+                    // If container properly created
+                    $orchestration->remove($containerId, true);
+                } else {
+                    // If whole creation failed, but container might have been initialized
+                    try {
+                        // Try to remove with contaier name instead of ID
+                        $orchestration->remove($runtimeId, true);
+                    } catch (Throwable $th) {
+                        // If fails, means initialization also failed.
+                        // Contianer is not there, no need to remove
+                    }
+                }
             }
+
+            // Release orchestration back to pool, we are done with it
             $orchestrationPool->put($orchestration);
         }
 
@@ -395,10 +407,10 @@ App::delete('/v1/runtimes/:runtimeId')
 
 App::post('/v1/execution')
     ->desc('Create an execution')
-    ->param('runtimeId', '', new Text(64), 'The runtimeID to execute')
-    ->param('vars', [], new Assoc(), 'Environment variables required for the build', false)
-    ->param('data', '', new Text(8192), 'Data to be forwarded to the function, this is user specified.', true)
-    ->param('timeout', 15, new ValidatorRange(1, 900), 'Function maximum execution time in seconds.', true)
+    ->param('runtimeId', '', new Text(64), 'The runtimeID to execute.')
+    ->param('vars', [], new Assoc(), 'Environment variables required for the build.')
+    ->param('data', '{}', new Text(8192), 'Data to be forwarded to the function, this is user specified.', true)
+    ->param('timeout', 15, new Range(1, (int) App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900)), 'Function maximum execution time in seconds.')
     ->inject('activeRuntimes')
     ->inject('response')
     ->action(
@@ -424,17 +436,19 @@ App::post('/v1/execution')
             $errNo = -1;
             $executorResponse = '';
 
+            $timeout ??= (int) App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900);
+
             $ch = \curl_init();
             $body = \json_encode([
                 'env' => $vars,
                 'payload' => $data,
-                'timeout' => $timeout ?? (int) App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900)
+                'timeout' => $timeout
             ]);
             \curl_setopt($ch, CURLOPT_URL, "http://" . $runtimeId . ":3000/");
             \curl_setopt($ch, CURLOPT_POST, true);
             \curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
             \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            \curl_setopt($ch, CURLOPT_TIMEOUT, $timeout ?? (int) App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900));
+            \curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
             \curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
     
             \curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -495,12 +509,12 @@ App::post('/v1/execution')
             $functionStatus = ($statusCode >= 200 && $statusCode < 300) ? 'completed' : 'failed';
         
             Console::success('Function executed in ' . $executionTime . ' seconds, status: ' . $functionStatus);
-        
+
             $execution = [
                 'status' => $functionStatus,
                 'statusCode' => $statusCode,
-                'stdout' => \utf8_encode(\mb_substr($stdout, -8000)),
-                'stderr' => \utf8_encode(\mb_substr($stderr, -8000)),
+                'stdout' => \mb_strcut($stdout, 0, 1000000), // Limit to 1MB
+                'stderr' => \mb_strcut($stderr, 0, 1000000), // Limit to 1MB
                 'time' => $executionTime,
             ];
 

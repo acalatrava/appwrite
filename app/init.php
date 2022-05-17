@@ -69,9 +69,9 @@ const APP_LIMIT_USERS = 10000;
 const APP_LIMIT_ANTIVIRUS = 20000000; //20MB
 const APP_LIMIT_ENCRYPTION = 20000000; //20MB
 const APP_LIMIT_COMPRESSION = 20000000; //20MB
-const APP_LIMIT_PREVIEW = 10000000; //10MB file size limit for preview endpoint
-const APP_CACHE_BUSTER = 300;
-const APP_VERSION_STABLE = '0.13.0';
+const APP_LIMIT_ARRAY_PARAMS_SIZE = 100; // Default maximum of how many elements can there be in API parameter that expects array value
+const APP_CACHE_BUSTER = 304;
+const APP_VERSION_STABLE = '0.13.4';
 const APP_DATABASE_ATTRIBUTE_EMAIL = 'email';
 const APP_DATABASE_ATTRIBUTE_ENUM = 'enum';
 const APP_DATABASE_ATTRIBUTE_IP = 'ip';
@@ -299,6 +299,30 @@ Database::addFilter('subQueryWebhooks',
             ->find('webhooks', [
                 new Query('projectId', Query::TYPE_EQUAL, [$document->getId()])
             ], $database->getIndexLimit(), 0, []);
+    }
+);
+
+Database::addFilter('subQueryTokens',
+    function($value) {
+        return null;
+    },
+    function($value, Document $document, Database $database) {
+        return Authorization::skip(fn() => $database
+            ->find('tokens', [
+                new Query('userId', Query::TYPE_EQUAL, [$document->getId()])
+            ], $database->getIndexLimit(), 0, []));
+    }
+);
+              
+Database::addFilter('subQueryMemberships',
+    function($value) {
+        return null;
+    },
+    function($value, Document $document, Database $database) {
+        return Authorization::skip(fn() => $database
+            ->find('memberships', [
+                new Query('userId', Query::TYPE_EQUAL, [$document->getId()])
+            ], $database->getIndexLimit(), 0, []));
     }
 );
 

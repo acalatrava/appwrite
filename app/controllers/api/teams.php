@@ -2,13 +2,16 @@
 
 use Appwrite\Auth\Auth;
 use Appwrite\Detector\Detector;
+use Appwrite\Event\Event;
+use Appwrite\Extend\Exception;
 use Appwrite\Network\Validator\Email;
 use Appwrite\Network\Validator\Host;
 use Appwrite\Template\Template;
 use Appwrite\Utopia\Database\Validator\CustomId;
+use Appwrite\Utopia\Request;
 use Appwrite\Utopia\Response;
+use MaxMind\Db\Reader;
 use Utopia\App;
-use Appwrite\Extend\Exception;
 use Utopia\Config\Config;
 use Utopia\Database\Database;
 use Utopia\Database\Document;
@@ -18,6 +21,7 @@ use Utopia\Database\Query;
 use Utopia\Database\Validator\Authorization;
 use Utopia\Database\Validator\Key;
 use Utopia\Database\Validator\UID;
+use Utopia\Locale\Locale;
 use Utopia\Validator\Text;
 use Utopia\Validator\Range;
 use Utopia\Validator\ArrayList;
@@ -37,16 +41,12 @@ App::post('/v1/teams')
     ->label('sdk.response.model', Response::MODEL_TEAM)
     ->param('teamId', '', new CustomId(), 'Team ID. Choose your own unique ID or pass the string "unique()" to auto generate it. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can\'t start with a special char. Max length is 36 chars.')
     ->param('name', null, new Text(128), 'Team name. Max length: 128 chars.')
-    ->param('roles', ['owner'], new ArrayList(new Key()), 'Array of strings. Use this param to set the roles in the team for the user who created it. The default role is **owner**. A role can be any string. Learn more about [roles and permissions](/docs/permissions). Max length for each role is 32 chars.', true)
+    ->param('roles', ['owner'], new ArrayList(new Key(), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Array of strings. Use this param to set the roles in the team for the user who created it. The default role is **owner**. A role can be any string. Learn more about [roles and permissions](/docs/permissions). Maximum of ' . APP_LIMIT_ARRAY_PARAMS_SIZE . ' roles are allowed, each 32 characters long.', true)
     ->inject('response')
     ->inject('user')
     ->inject('dbForProject')
     ->inject('events')
-    ->action(function ($teamId, $name, $roles, $response, $user, $dbForProject, $events) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Document $user */
-        /** @var Utopia\Database\Database $dbForProject */
-        /** @var Appwrite\Event\Event $events */
+    ->action(function (string $teamId, string $name, array $roles, Response $response, Document $user, Database $dbForProject, Event $events) {
 
         $isPrivilegedUser = Auth::isPrivilegedUser(Authorization::getRoles());
         $isAppUser = Auth::isAppUser(Authorization::getRoles());
@@ -79,10 +79,7 @@ App::post('/v1/teams')
             ]);
 
             $membership = $dbForProject->createDocument('memberships', $membership);
-
-            // Attach user to team
-            $user->setAttribute('memberships', $membership, Document::SET_TYPE_APPEND);
-            $user = $dbForProject->updateDocument('users', $user->getId(), $user);
+            $dbForProject->deleteCachedDocument('users', $user->getId());
         }
 
         if (!empty($user->getId())) {
@@ -112,9 +109,7 @@ App::get('/v1/teams')
     ->param('orderType', 'ASC', new WhiteList(['ASC', 'DESC'], true), 'Order result by ASC or DESC order.', true)
     ->inject('response')
     ->inject('dbForProject')
-    ->action(function ($search, $limit, $offset, $cursor, $cursorDirection, $orderType, $response, $dbForProject) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Database $dbForProject */
+    ->action(function (string $search, int $limit, int $offset, string $cursor, string $cursorDirection, string $orderType, Response $response, Database $dbForProject) {
 
         if (!empty($cursor)) {
             $cursorTeam = $dbForProject->getDocument('teams', $cursor);
@@ -153,9 +148,7 @@ App::get('/v1/teams/:teamId')
     ->param('teamId', '', new UID(), 'Team ID.')
     ->inject('response')
     ->inject('dbForProject')
-    ->action(function ($teamId, $response, $dbForProject) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Database $dbForProject */
+    ->action(function (string $teamId, Response $response, Database $dbForProject) {
 
         $team = $dbForProject->getDocument('teams', $teamId);
 
@@ -182,9 +175,7 @@ App::put('/v1/teams/:teamId')
     ->param('name', null, new Text(128), 'New team name. Max length: 128 chars.')
     ->inject('response')
     ->inject('dbForProject')
-    ->action(function ($teamId, $name, $response, $dbForProject) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Database $dbForProject */
+    ->action(function (string $teamId, string $name, Response $response, Database $dbForProject) {
 
         $team = $dbForProject->getDocument('teams', $teamId);
 
@@ -216,11 +207,7 @@ App::delete('/v1/teams/:teamId')
     ->inject('dbForProject')
     ->inject('events')
     ->inject('deletes')
-    ->action(function ($teamId, $response, $dbForProject, $events, $deletes) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Database $dbForProject */
-        /** @var Appwrite\Event\Event $events */
-        /** @var Appwrite\Event\Event $deletes */
+    ->action(function (string $teamId, Response $response, Database $dbForProject, Event $events, Event $deletes) {
 
         $team = $dbForProject->getDocument('teams', $teamId);
 
@@ -271,7 +258,7 @@ App::post('/v1/teams/:teamId/memberships')
     ->label('abuse-limit', 10)
     ->param('teamId', '', new UID(), 'Team ID.')
     ->param('email', '', new Email(), 'Email of the new team member.')
-    ->param('roles', [], new ArrayList(new Key()), 'Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](/docs/permissions). Max length for each role is 32 chars.')
+    ->param('roles', [], new ArrayList(new Key(), APP_LIMIT_ARRAY_PARAMS_SIZE), 'Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](/docs/permissions). Maximum of ' . APP_LIMIT_ARRAY_PARAMS_SIZE . ' roles are allowed, each 32 characters long.')
     ->param('url', '', function ($clients) { return new Host($clients); }, 'URL to redirect the user back to your app from the invitation email.  Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an [open redirect](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.', false, ['clients']) // TODO add our own built-in confirm page
     ->param('name', '', new Text(128), 'Name of the new team member. Max length: 128 chars.', true)
     ->inject('response')
@@ -281,13 +268,7 @@ App::post('/v1/teams/:teamId/memberships')
     ->inject('locale')
     ->inject('audits')
     ->inject('mails')
-    ->action(function ($teamId, $email, $roles, $url, $name, $response, $project, $user, $dbForProject, $locale, $audits, $mails) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Document $project */
-        /** @var Utopia\Database\Document $user */
-        /** @var Utopia\Database\Database $dbForProject */
-        /** @var Appwrite\Event\Event $audits */
-        /** @var Appwrite\Event\Event $mails */
+    ->action(function (string $teamId, string $email, array $roles, string $url, string $name, Response $response, Document $project, Document $user, Database $dbForProject, Locale $locale, Event $audits, Event $mails) {
 
         if(empty(App::getEnv('_APP_SMTP_HOST'))) {
             throw new Exception('SMTP Disabled', 503, Exception::GENERAL_SMTP_DISABLED);
@@ -339,9 +320,10 @@ App::post('/v1/teams/:teamId/memberships')
                     'name' => $name,
                     'prefs' => new \stdClass(),
                     'sessions' => [],
-                    'tokens' => [],
-                    'memberships' => [],
+                    'tokens' => null,
+                    'memberships' => null,
                     'search' => implode(' ', [$userId, $email, $name]),
+                    'deleted' => false
                 ])));
             } catch (Duplicate $th) {
                 throw new Exception('Account already exists', 409, Exception::USER_ALREADY_EXISTS);
@@ -380,10 +362,7 @@ App::post('/v1/teams/:teamId/memberships')
             $team->setAttribute('total', $team->getAttribute('total', 0) + 1);
             $team = Authorization::skip(fn() => $dbForProject->updateDocument('teams', $team->getId(), $team));
 
-            // Attach user to team
-            $invitee->setAttribute('memberships', $membership, Document::SET_TYPE_APPEND);
-
-            $invitee = Authorization::skip(fn() => $dbForProject->updateDocument('users', $invitee->getId(), $invitee));
+            $dbForProject->deleteCachedDocument('users', $invitee->getId());
         } else {
             try {
                 $membership = $dbForProject->createDocument('memberships', $membership);
@@ -445,9 +424,7 @@ App::get('/v1/teams/:teamId/memberships')
     ->param('orderType', 'ASC', new WhiteList(['ASC', 'DESC'], true), 'Order result by ASC or DESC order.', true)
     ->inject('response')
     ->inject('dbForProject')
-    ->action(function ($teamId, $search, $limit, $offset, $cursor, $cursorDirection, $orderType, $response, $dbForProject) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Database $dbForProject */
+    ->action(function (string $teamId, string $search, int $limit, int $offset, string $cursor, string $cursorDirection, string $orderType, Response $response, Database $dbForProject) {
 
         $team = $dbForProject->getDocument('teams', $teamId);
 
@@ -519,9 +496,7 @@ App::get('/v1/teams/:teamId/memberships/:membershipId')
     ->param('membershipId', '', new UID(), 'Membership ID.')
     ->inject('response')
     ->inject('dbForProject')
-    ->action(function ($teamId, $membershipId, $response, $dbForProject) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Database $dbForProject */
+    ->action(function (string $teamId, string $membershipId, Response $response, Database $dbForProject) {
 
         $team = $dbForProject->getDocument('teams', $teamId);
 
@@ -559,18 +534,13 @@ App::patch('/v1/teams/:teamId/memberships/:membershipId')
     ->label('sdk.response.model', Response::MODEL_MEMBERSHIP)
     ->param('teamId', '', new UID(), 'Team ID.')
     ->param('membershipId', '', new UID(), 'Membership ID.')
-    ->param('roles', [], new ArrayList(new Key()), 'An array of strings. Use this param to set the user\'s roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Max length for each role is 32 chars.')
+    ->param('roles', [], new ArrayList(new Key(), APP_LIMIT_ARRAY_PARAMS_SIZE), 'An array of strings. Use this param to set the user\'s roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of ' . APP_LIMIT_ARRAY_PARAMS_SIZE . ' roles are allowed, each 32 characters long.')
     ->inject('request')
     ->inject('response')
     ->inject('user')
     ->inject('dbForProject')
     ->inject('audits')
-    ->action(function ($teamId, $membershipId, $roles, $request, $response, $user, $dbForProject, $audits) {
-        /** @var Appwrite\Utopia\Request $request */
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Document $user */
-        /** @var Utopia\Database\Database $dbForProject */
-        /** @var Appwrite\Event\Event $audits */
+    ->action(function (string $teamId, string $membershipId, array $roles, Request $request, Response $response, Document $user, Database $dbForProject, Event $audits) {
 
         $team = $dbForProject->getDocument('teams', $teamId);
         if ($team->isEmpty()) {
@@ -604,13 +574,8 @@ App::patch('/v1/teams/:teamId/memberships/:membershipId')
         /**
          * Replace membership on profile
          */
-        $memberships = array_filter($profile->getAttribute('memberships'), fn (Document $m) => $m->getId() !== $membership->getId());
-
-        $profile
-            ->setAttribute('memberships', $memberships)
-            ->setAttribute('memberships', $membership, Document::SET_TYPE_APPEND);
-
-        Authorization::skip(fn () => $dbForProject->updateDocument('users', $profile->getId(), $profile));
+         
+        $dbForProject->deleteCachedDocument('users', $profile->getId());
 
         $audits
             ->setParam('userId', $user->getId())
@@ -647,13 +612,7 @@ App::patch('/v1/teams/:teamId/memberships/:membershipId/status')
     ->inject('dbForProject')
     ->inject('geodb')
     ->inject('audits')
-    ->action(function ($teamId, $membershipId, $userId, $secret, $request, $response, $user, $dbForProject, $geodb, $audits) {
-        /** @var Appwrite\Utopia\Request $request */
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Document $user */
-        /** @var Utopia\Database\Database $dbForProject */
-        /** @var MaxMind\Db\Reader $geodb */
-        /** @var Appwrite\Event\Event $audits */
+    ->action(function (string $teamId, string $membershipId, string $userId, string $secret, Request $request, Response $response, Document $user, Database $dbForProject, Reader $geodb, Event $audits) {
 
         $protocol = $request->getProtocol();
 
@@ -689,6 +648,10 @@ App::patch('/v1/teams/:teamId/memberships/:membershipId/status')
             throw new Exception('Invite does not belong to current user ('.$user->getAttribute('email').')', 401, Exception::TEAM_INVITE_MISMATCH);
         }
 
+        if ($membership->getAttribute('confirm') === true) {
+            throw new Exception('Membership already confirmed', 409);
+        }
+
         $membership // Attach user to team
             ->setAttribute('joined', \time())
             ->setAttribute('confirm', true)
@@ -696,7 +659,6 @@ App::patch('/v1/teams/:teamId/memberships/:membershipId/status')
 
         $user
             ->setAttribute('emailVerification', true)
-            ->setAttribute('memberships', $membership, Document::SET_TYPE_APPEND)
         ;
 
         // Log user in
@@ -730,6 +692,8 @@ App::patch('/v1/teams/:teamId/memberships/:membershipId/status')
 
         $user = $dbForProject->updateDocument('users', $user->getId(), $user);
         $membership = $dbForProject->updateDocument('memberships', $membership->getId(), $membership);
+        
+        $dbForProject->deleteCachedDocument('users', $user->getId());
 
         $team = Authorization::skip(fn() => $dbForProject->updateDocument('teams', $team->getId(), $team->setAttribute('total', $team->getAttribute('total', 0) + 1)));
 
@@ -773,11 +737,7 @@ App::delete('/v1/teams/:teamId/memberships/:membershipId')
     ->inject('dbForProject')
     ->inject('audits')
     ->inject('events')
-    ->action(function ($teamId, $membershipId, $response, $dbForProject, $audits, $events) {
-        /** @var Appwrite\Utopia\Response $response */
-        /** @var Utopia\Database\Database $dbForProject */
-        /** @var Appwrite\Event\Event $audits */
-        /** @var Appwrite\Event\Event $events */
+    ->action(function (string $teamId, string $membershipId, Response $response, Database $dbForProject, Event $audits, Event $events) {
 
         $membership = $dbForProject->getDocument('memberships', $membershipId);
 
@@ -809,20 +769,7 @@ App::delete('/v1/teams/:teamId/memberships/:membershipId')
             throw new Exception('Failed to remove membership from DB', 500, Exception::GENERAL_SERVER_ERROR);
         }
 
-        $memberships = $user->getAttribute('memberships', []);
-
-        foreach ($memberships as $key => $child) { 
-            /** @var Document $child */
-
-            if ($membershipId == $child->getId()) {
-                unset($memberships[$key]);
-                break;
-            }
-        }
-
-        $user->setAttribute('memberships', $memberships);
-
-        Authorization::skip(fn() => $dbForProject->updateDocument('users', $user->getId(), $user));
+        $dbForProject->deleteCachedDocument('users', $user->getId());
 
         if ($membership->getAttribute('confirm')) { // Count only confirmed members
             $team->setAttribute('total', \max($team->getAttribute('total', 0) - 1, 0));

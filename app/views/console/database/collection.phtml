@@ -639,7 +639,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="string-key">Attribute ID</label>
-        <input id="string-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="string-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <label for="string-length">Size</label>
@@ -695,7 +695,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="integer-key">Attribute ID</label>
-        <input id="integer-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="integer-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <div class="margin-bottom">
@@ -760,7 +760,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="float-key">Attribute ID</label>
-        <input id="float-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="float-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <div class="margin-bottom">
@@ -774,21 +774,21 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <div class="row responsive thin">
             <div class="col span-6 margin-bottom-small">
                 <label for="float-min">Min</label>
-                <input id="float-min" type="number" class="full-width" name="min" step="0.01" autocomplete="off" data-cast-to="float" />
+                <input id="float-min" type="number" class="full-width" name="min" step="any" autocomplete="off" data-cast-to="float" />
             </div>
             <div class="col span-6 margin-bottom-small">
                 <label for="float-max">Max</label>
-                <input id="float-max" type="number" class="full-width" name="max" step="0.01" autocomplete="off" data-cast-to="float" />
+                <input id="float-max" type="number" class="full-width" name="max" step="any" autocomplete="off" data-cast-to="float" />
             </div>
         </div>
 
         <label for="float-default">Default Value</label>
 
         <template x-if="!(array || required)">
-            <input name="xdefault" type="number" step="0.01" class="margin-bottom-large" autocomplete="off" data-cast-to="float">
+            <input name="xdefault" type="number" step="any" class="margin-bottom-large" autocomplete="off" data-cast-to="float">
         </template>
         <template x-if="(array || required)">
-            <input name="xdefault" type="number" step="0.01" class="margin-bottom-large" autocomplete="off" data-cast-to="float" disabled>
+            <input name="xdefault" type="number" step="any" class="margin-bottom-large" autocomplete="off" data-cast-to="float" disabled>
         </template>
 
         <footer>
@@ -825,7 +825,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="email-key">Attribute ID</label>
-        <input id="email-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="128" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="email-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="128" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <div class="margin-bottom">
@@ -878,7 +878,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="boolean-key">Attribute ID</label>
-        <input id="boolean-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="boolean-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <div class="margin-bottom">
@@ -935,7 +935,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="ip-key">Attribute ID</label>
-        <input id="ip-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="ip-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <div class="margin-bottom">
@@ -988,7 +988,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="url-key">Attribute ID</label>
-        <input id="url-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="url-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <div class="margin-bottom">
@@ -1041,7 +1041,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="enum-key">Attribute ID</label>
-        <input id="enum-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="enum-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <label>Elements</label>
@@ -1052,7 +1052,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
             <div data-forms-clone="" data-label="Add Element" data-target="elements-section" data-first="1">
                 <div class="row responsive thin margin-bottom-tiny">
                     <div class="col span-11 margin-bottom-small">
-                        <input type="text" class="full-width" name="elements" required autocomplete="off" maxlength="128" />
+                        <input data-cast-to="array" type="text" class="full-width" name="elements" required autocomplete="off" maxlength="128" />
                     </div>
                     <div class="col span-1 margin-bottom-small">
                         <button type="button" data-remove class="dark danger small round pull-end" style="margin-top: 10px;"><i class="icon-cancel"></i></button>
@@ -1119,7 +1119,7 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
         <input type="hidden" name="collectionId" data-ls-bind="{{router.params.id}}" />
 
         <label for="index-key">Index Key</label>
-        <input id="index-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{1,36}$" />
+        <input id="index-key" type="text" class="full-width" name="key" required autocomplete="off" maxlength="36" pattern="^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$" />
         <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Allowed Characters A-Z, a-z, 0-9, and non-leading underscore, hyphen and dot</div>
 
         <label for="index-type">Type</label>
