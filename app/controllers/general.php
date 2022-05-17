@@ -575,6 +575,20 @@ App::get('/apple-app-site-association')
         $response->text($template->render(false));
     });
 
+/**
+ * Para el fichero específico que hay que servir a Android para los universal links
+ * más info: https://developer.android.com/training/app-links/verify-site-associations
+ */
+App::get('/.well-known/assetlinks.json')
+    ->desc('Android Asset Links File')
+    ->label('scope', 'public')
+    ->label('docs', false)
+    ->inject('response')
+    ->action(function ($response) {
+        $template = new View(__DIR__.'/../views/general/android-kriptor-assetlinks.phtml');
+        $response->text($template->render(false));
+    });
+
 App::get('/.well-known/acme-challenge')
     ->desc('SSL Verification')
     ->label('scope', 'public')
