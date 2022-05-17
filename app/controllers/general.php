@@ -561,6 +561,20 @@ App::get('/humans.txt')
         $response->text($template->render(false));
     });
 
+/**
+ * Para el fichero específico que hay que servir a iOS para los universal links
+ * más info: https://developer.apple.com/documentation/xcode/supporting-associated-domains
+ */
+App::get('/apple-app-site-association')
+    ->desc('Apple App Site Association File')
+    ->label('scope', 'public')
+    ->label('docs', false)
+    ->inject('response')
+    ->action(function ($response) {
+        $template = new View(__DIR__.'/../views/general/apple-kriptor-association.phtml');
+        $response->text($template->render(false));
+    });
+
 App::get('/.well-known/acme-challenge')
     ->desc('SSL Verification')
     ->label('scope', 'public')
