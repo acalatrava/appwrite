@@ -576,6 +576,20 @@ App::get('/.well-known/apple-app-site-association')
     });
 
 /**
+ * No queda muy claro si este fichero debe estar en la raíz on en .well-known, así que lo ponemos en ambos
+ * https://developer.apple.com/library/archive/documentation/General/Conceptual/AppSearch/UniversalLinks.html#//apple_ref/doc/uid/TP40016308-CH12-SW1
+ */
+App::get('/apple-app-site-association')
+    ->desc('Apple App Site Association File')
+    ->label('scope', 'public')
+    ->label('docs', false)
+    ->inject('response')
+    ->action(function ($response) {
+        $template = new View(__DIR__.'/../views/general/apple-kriptor-association.phtml');
+        $response->text($template->render(false));
+    });
+
+/**
  * Para el fichero específico que hay que servir a Android para los universal links
  * más info: https://developer.android.com/training/app-links/verify-site-associations
  */
@@ -588,6 +602,19 @@ App::get('/.well-known/assetlinks.json')
         $template = new View(__DIR__.'/../views/general/android-kriptor-assetlinks.phtml');
         $response->text($template->render(false));
     });
+
+/**
+ * Para que recoverPassword no de un 404
+ */
+App::get('/recoverPassword/')
+->desc('RecoverPassword')
+->label('scope', 'public')
+->label('docs', false)
+->inject('response')
+->action(function ($response) {
+    $template = new View(__DIR__.'/../views/general/recoverPassword.phtml');
+    $response->text($template->render(false));
+});
 
 App::get('/.well-known/acme-challenge')
     ->desc('SSL Verification')
