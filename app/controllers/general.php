@@ -538,7 +538,7 @@ App::get('/humans.txt')
  * Para el fichero específico que hay que servir a iOS para los universal links
  * más info: https://developer.apple.com/documentation/xcode/supporting-associated-domains
  */
-App::get('/apple-app-site-association')
+App::get('/.well-known/apple-app-site-association')
     ->desc('Apple App Site Association File')
     ->label('scope', 'public')
     ->label('docs', false)
