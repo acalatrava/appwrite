@@ -298,6 +298,22 @@ class Auth
     }
 
     /**
+     * Is Member of a Team?
+     *
+     * @param array $roles
+     *
+     * @return bool
+     */
+    public static function isTeamMember(array $roles): bool
+    {
+        if (in_array('role:'.self::USER_ROLE_TEAM_MEMBER, $roles)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns all roles for a user.
      *
      * @param Document $user
