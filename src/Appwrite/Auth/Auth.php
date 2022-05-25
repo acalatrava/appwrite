@@ -13,6 +13,7 @@ class Auth
     public const USER_ROLE_ALL = 'all';
     public const USER_ROLE_GUEST = 'guest';
     public const USER_ROLE_MEMBER = 'member';
+    public const USER_ROLE_TEAM_MEMBER = 'team_member';
     public const USER_ROLE_ADMIN = 'admin';
     public const USER_ROLE_DEVELOPER = 'developer';
     public const USER_ROLE_OWNER = 'owner';
@@ -315,14 +316,20 @@ class Auth
             }
         }
 
+        $isMemberOfTeam = false;
         foreach ($user->getAttribute('memberships', []) as $node) {
             if (isset($node['teamId']) && isset($node['roles'])) {
+                $isMemberOfTeam = true;
                 $roles[] = 'team:' . $node['teamId'];
 
                 foreach ($node['roles'] as $nodeRole) { // Set all team roles
                     $roles[] = 'team:' . $node['teamId'] . '/' . $nodeRole;
                 }
             }
+        }
+
+        if ($isMemberOfTeam) {
+            $roles[] = 'role:'.Auth::USER_ROLE_TEAM_MEMBER;
         }
 
         return $roles;
