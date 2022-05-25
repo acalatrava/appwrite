@@ -398,6 +398,11 @@ App::post('/v1/storage/buckets/:bucketId/files')
         // Users can only add their roles to files, API keys and Admin users can add any
         $roles = Authorization::getRoles();
 
+        // Añado esto para que solo los miembros de un grupo puedan crear documentos
+        if (!Auth::isTeamMember($roles)) {
+            throw new Exception('You must be a member of a team to access this resource', 400, Exception::USER_UNAUTHORIZED);
+        }
+
         if (!Auth::isAppUser($roles) && !Auth::isPrivilegedUser($roles) && $bucket->getAttribute('permission') !== 'file-unrestricted') {
             foreach ($read as $role) {
                 if (!Authorization::isRole($role)) {
