@@ -1629,7 +1629,7 @@ App::post('/v1/database/collections/:collectionId/documents')
         $roles = Authorization::getRoles();
 
         // Añado esto para que solo los miembros de un grupo puedan crear documentos
-        if (!Auth::isTeamMember($roles)) {
+        if (!Auth::isTeamMember($roles) && !Auth::isAppUser($roles)) {
             throw new Exception('You must be a member of a team to access this resource', 400, Exception::USER_UNAUTHORIZED);
         }
 
@@ -2030,7 +2030,7 @@ App::patch('/v1/database/collections/:collectionId/documents/:documentId')
         $roles = Authorization::getRoles();
 
         // Añado esto para que solo los miembros de un grupo puedan crear documentos
-        if (!Auth::isTeamMember($roles)) {
+        if (!Auth::isTeamMember($roles) && !Auth::isAppUser($roles)) {
             throw new Exception('You must be a member of a team to access this resource', 400, Exception::USER_UNAUTHORIZED);
         }
 
