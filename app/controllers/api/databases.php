@@ -1877,6 +1877,11 @@ App::post('/v1/databases/:databaseId/collections/:collectionId/documents')
         // Users can only add their roles to documents, API keys and Admin users can add any
         $roles = Authorization::getRoles();
 
+        // Añado esto para que solo los miembros de un grupo puedan crear documentos
+        if (!Auth::isTeamMember($roles)) {
+            throw new Exception('You must be a member of a team to access this resource', 400, Exception::USER_UNAUTHORIZED);
+        }
+
         if (!Auth::isAppUser($roles) && !Auth::isPrivilegedUser($roles) && $collection->getAttribute('permission') !== 'document-unrestricted') {
             foreach ($data['$read'] as $read) {
                 if (!Authorization::isRole($read)) {
@@ -2296,6 +2301,11 @@ App::patch('/v1/databases/:databaseId/collections/:collectionId/documents/:docum
 
         // Users can only add their roles to documents, API keys and Admin users can add any
         $roles = Authorization::getRoles();
+
+        // Añado esto para que solo los miembros de un grupo puedan crear documentos
+        if (!Auth::isTeamMember($roles)) {
+            throw new Exception('You must be a member of a team to access this resource', 400, Exception::USER_UNAUTHORIZED);
+        }
 
         if (!Auth::isAppUser($roles) && !Auth::isPrivilegedUser($roles) && $collection->getAttribute('permission') !== 'document-unrestricted') {
             if(!is_null($read)) {
