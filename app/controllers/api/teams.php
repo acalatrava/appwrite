@@ -56,6 +56,10 @@ App::post('/v1/teams')
         $isPrivilegedUser = Auth::isPrivilegedUser(Authorization::getRoles());
         $isAppUser = Auth::isAppUser(Authorization::getRoles());
 
+        if (!$isPrivilegedUser && !$isAppUser) {
+            throw new Exception('Team creation is not allowed', 401, Exception::USER_UNAUTHORIZED);
+        }
+
         $teamId = $teamId == 'unique()' ? $dbForProject->getId() : $teamId;
         $team = Authorization::skip(fn() => $dbForProject->createDocument('teams', new Document([
             '$id' => $teamId ,
