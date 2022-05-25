@@ -613,7 +613,7 @@ App::get('/recoverPassword/')
 ->inject('response')
 ->action(function ($response) {
     $template = new View(__DIR__.'/../views/general/recoverPassword.phtml');
-    $response->text($template->render(false));
+    $response->html($template->render(false));
 });
 
 App::get('/.well-known/acme-challenge')
