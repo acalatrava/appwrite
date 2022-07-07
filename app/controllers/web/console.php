@@ -284,7 +284,7 @@ App::get('/console/databases/collection')
             ])
         ;
 
-        $page = new View(__DIR__.'/../../views/console/database/collection.phtml');
+        $page = new View(__DIR__.'/../../views/console/databases/collection.phtml');
         
         $page
             ->setParam('logs', $logs)
