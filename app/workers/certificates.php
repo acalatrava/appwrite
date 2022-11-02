@@ -320,6 +320,19 @@ class CertificatesV1 extends Worker
             }
         }
 
+        // Sometimes certificates are not in the correct path, so we do a glob to find them
+        $domain_path = glob('/etc/letsencrypt/live/' . $domain . '*');
+
+        if (count($domain_path) == 0) {
+            throw new Exception('Path for certificates not found. Let\'s Encrypt log: ' . $letsEncryptData['stderr'] . ' ; ' . $letsEncryptData['stdout']);
+        }
+
+        if (count($domain_path) > 1) {
+            array_multisort(array_map('filemtime', $domain_path), SORT_NUMERIC, SORT_DESC, $domain_path);
+        }
+
+        $domain = basename($domain_path[0]);
+
         // Move generated files from certbot into our storage
         if (!@\rename('/etc/letsencrypt/live/' . $domain . '/cert.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/cert.pem')) {
             throw new Exception('Failed to rename certificate cert.pem. Let\'s Encrypt log: ' . $letsEncryptData['stderr'] . ' ; ' . $letsEncryptData['stdout']);
