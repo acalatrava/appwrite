@@ -36,7 +36,7 @@ App::post('/v1/teams')
     ->groups(['api', 'teams'])
     ->label('event', 'teams.[teamId].create')
     ->label('scope', 'teams.write')
-    ->label('sdk.auth', [APP_AUTH_TYPE_SESSION, APP_AUTH_TYPE_KEY, APP_AUTH_TYPE_JWT])
+    ->label('sdk.auth', [APP_AUTH_TYPE_KEY]) // Se modifica para que sólo se pueda acceder en modo server
     ->label('sdk.namespace', 'teams')
     ->label('sdk.method', 'create')
     ->label('sdk.description', '/docs/references/teams/create-team.md')
