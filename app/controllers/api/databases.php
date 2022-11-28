@@ -497,7 +497,7 @@ App::post('/v1/databases/:databaseId/collections')
     ->param('databaseId', '', new UID(), 'Database ID.')
     ->param('collectionId', '', new CustomId(), 'Unique Id. Choose your own unique ID or pass the string "unique()" to auto generate it. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can\'t start with a special char. Max length is 36 chars.')
     ->param('name', '', new Text(128), 'Collection name. Max length: 128 chars.')
-    ->param('permission', null, new WhiteList(['document', 'document-unrestricted', 'collection']), 'Permissions type model to use for reading documents in this collection. You can use collection-level permission set once on the collection using the `read` and `write` params, or you can set document-level permission where each document read and write params will decide who has access to read and write to each document individually. [learn more about permissions](https://appwrite.io/docs/permissions) and get a full list of available permissions.')
+    ->param('permission', null, new WhiteList(['document', 'document-unrestricted', 'collection', 'collection-document']), 'Permissions type model to use for reading documents in this collection. You can use collection-level permission set once on the collection using the `read` and `write` params, or you can set document-level permission where each document read and write params will decide who has access to read and write to each document individually. [learn more about permissions](https://appwrite.io/docs/permissions) and get a full list of available permissions.')
     ->param('read', null, new Permissions(), 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](https://appwrite.io/docs/permissions) and get a full list of available permissions.')
     ->param('write', null, new Permissions(), 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](https://appwrite.io/docs/permissions) and get a full list of available permissions.')
     ->inject('response')
@@ -1862,7 +1862,7 @@ App::post('/v1/databases/:databaseId/collections/:collectionId/documents')
         }
 
         // Check collection permissions when enforced
-        if ($collection->getAttribute('permission') === 'collection') {
+        if ($collection->getAttribute('permission') === 'collection' || $collection->getAttribute('permission') === 'collection-document') {
             $validator = new Authorization('write');
             if (!$validator->isValid($collection->getWrite())) {
                 throw new Exception('Unauthorized permissions', 401, Exception::USER_UNAUTHORIZED);
@@ -1989,7 +1989,7 @@ App::get('/v1/databases/:databaseId/collections/:collectionId/documents')
         }
 
         // Check collection permissions when enforced
-        if ($collection->getAttribute('permission') === 'collection') {
+        if ($collection->getAttribute('permission') === 'collection' || $collection->getAttribute('permission') === 'collection-document') {
             $validator = new Authorization('read');
             if (!$validator->isValid($collection->getRead())) {
                 throw new Exception('Unauthorized permissions', 401, Exception::USER_UNAUTHORIZED);
@@ -2095,7 +2095,7 @@ App::get('/v1/databases/:databaseId/collections/:collectionId/documents/:documen
         }
 
         // Check collection permissions when enforced
-        if ($collection->getAttribute('permission') === 'collection') {
+        if ($collection->getAttribute('permission') === 'collection' || $collection->getAttribute('permission') === 'collection-document') {
             $validator = new Authorization('read');
             if (!$validator->isValid($collection->getRead())) {
                 throw new Exception('Unauthorized permissions', 401, Exception::USER_UNAUTHORIZED);
@@ -2265,12 +2265,14 @@ App::patch('/v1/databases/:databaseId/collections/:collectionId/documents/:docum
         }
 
         // Check collection permissions when enforced
-        if ($collection->getAttribute('permission') === 'collection') {
+        if ($collection->getAttribute('permission') === 'collection' || $collection->getAttribute('permission') === 'collection-document') {
             $validator = new Authorization('write');
             if (!$validator->isValid($collection->getWrite())) {
                 throw new Exception('Unauthorized permissions', 401, Exception::USER_UNAUTHORIZED);
             }
+        }
 
+        if ($collection->getAttribute('permission') === 'collection') {
             $document = Authorization::skip(fn() => $dbForProject->getDocument('database_' . $database->getInternalId() . '_collection_' . $collection->getInternalId(), $documentId));
         } else {
             $document = $dbForProject->getDocument('database_' . $database->getInternalId() . '_collection_' . $collection->getInternalId(), $documentId);
@@ -2416,7 +2418,7 @@ App::delete('/v1/databases/:databaseId/collections/:collectionId/documents/:docu
         }
 
         // Check collection permissions when enforced
-        if ($collection->getAttribute('permission') === 'collection') {
+        if ($collection->getAttribute('permission') === 'collection' || $collection->getAttribute('permission') === 'collection-document') {
             $validator = new Authorization('write');
             if (!$validator->isValid($collection->getWrite())) {
                 throw new Exception('Unauthorized permissions', 401, Exception::USER_UNAUTHORIZED);

@@ -563,6 +563,15 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
                                     </div>
                                 </div>
 
+                                <div class="row" >
+                                    <div class="col span-1"><input name="permission" value="collection-document" type="radio" class="margin-top-no" data-ls-bind="{{project-collection.permission}}" /></div>
+                                    <div class="col span-11">
+                                        <b>Collection + Document Level</b>
+                                        <p class="text-fade margin-top-tiny">With Collection + Document Level permissions, Both Collection and Document permission are being in use, so the most restricted one will be granted. If a collection permission is only granted to be read then you won't be able to write even if the document allows you to.</p>
+                                        <p class="text-fade margin-top-tiny">In this permission level, collection permissions take precedence over document permissions.</p>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col span-1"><input name="permission" value="document" type="radio" class="margin-top-no" data-ls-bind="{{project-collection.permission}}" /></div>
                                     <div class="col span-11">
