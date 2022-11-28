@@ -569,6 +569,15 @@ $unrestrictedFeature = $this->getParam('unrestrictedFeature', 'disabled');
                                         <b>Collection + Document Level</b>
                                         <p class="text-fade margin-top-tiny">With Collection + Document Level permissions, Both Collection and Document permission are being in use, so the most restricted one will be granted. If a collection permission is only granted to be read then you won't be able to write even if the document allows you to.</p>
                                         <p class="text-fade margin-top-tiny">In this permission level, collection permissions take precedence over document permissions.</p>
+                                        <div data-ls-if="{{project-collection.permission}} === 'collection-document'">
+                                            <label for="collection-read">Read Access <span class="text-size-small">(<a data-ls-attrs="href={{env.HOME}}/docs/permissions" target="_blank" rel="noopener">Learn more</a>)</span></label>
+                                            <input type="hidden" id="collection-read" name="read" data-forms-tags data-cast-to="json" data-ls-bind="{{project-collection.$read}}" placeholder="User ID, Team ID or Role" />
+                                            <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Add 'role:all' for wildcard access</div>
+
+                                            <label for="collection-write">Write Access <span class="text-size-small">(<a data-ls-attrs="href={{env.HOME}}/docs/permissions" target="_blank" rel="noopener">Learn more</a>)</label>
+                                            <input type="hidden" id="collection-write" name="write" data-forms-tags data-cast-to="json" data-ls-bind="{{project-collection.$write}}" placeholder="User ID, Team ID or Role" />
+                                            <div class="text-fade text-size-xs margin-top-negative-small margin-bottom">Add 'role:all' for wildcard access</div>
+                                        </div>
                                     </div>
                                 </div>
 
