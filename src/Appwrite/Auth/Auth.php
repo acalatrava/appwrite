@@ -343,7 +343,7 @@ class Auth
 
                     if ($node['teamId'] == 'superadmin' && $nodeRole == 'owner') // Es un superadmin así que le damos privilegios de root
                     {
-                        $roles[] = 'role:' . self::USER_ROLE_ADMIN;
+                        $roles[] = 'role:' . Auth::USER_ROLE_ADMIN;
                     }
                 }
             }

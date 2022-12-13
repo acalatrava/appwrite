@@ -330,6 +330,18 @@ RUN echo "default_socket_timeout=-1" >> /usr/local/etc/php/conf.d/appwrite.ini
 RUN echo "opcache.jit_buffer_size=100M" >> /usr/local/etc/php/conf.d/appwrite.ini
 RUN echo "opcache.jit=1235" >> /usr/local/etc/php/conf.d/appwrite.ini
 
+# Modificar utopia para que superadmin tenga acceso a todo
+RUN echo "81c81" > /tmp/Document_diff.php
+RUN echo "<         return array_unique($this->getAttribute('$read', []));" >> /tmp/Document_diff.php
+RUN echo "---" >> /tmp/Document_diff.php
+RUN echo ">         return array_unique(array_merge($this->getAttribute('$read', []), ['team:superadmin/owner']));" >> /tmp/Document_diff.php
+RUN echo "89c89" >> /tmp/Document_diff.php
+RUN echo "<         return array_unique($this->getAttribute('$write', []));" >> /tmp/Document_diff.php
+RUN echo "---" >> /tmp/Document_diff.php
+RUN echo ">         return array_unique(array_merge($this->getAttribute('$write', []), ['team:superadmin/owner']));" >> /tmp/Document_diff.php
+RUN apk add patch
+RUN patch /usr/src/code/vendor//utopia-php/database/src/Database/Document.php /tmp/Document_diff.php
+
 EXPOSE 80
 
 CMD [ "php", "app/http.php", "-dopcache.preload=opcache.preload=/usr/src/code/app/preload.php" ]
