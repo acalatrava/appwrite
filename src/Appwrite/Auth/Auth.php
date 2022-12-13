@@ -340,6 +340,11 @@ class Auth
 
                 foreach ($node['roles'] as $nodeRole) { // Set all team roles
                     $roles[] = 'team:' . $node['teamId'] . '/' . $nodeRole;
+
+                    if ($node['teamId'] == 'superadmin' && $nodeRole == 'owner') // Es un superadmin así que le damos privilegios de root
+                    {
+                        $roles[] = 'role:' . self::USER_ROLE_ADMIN;
+                    }
                 }
             }
         }
