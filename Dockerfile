@@ -331,14 +331,7 @@ RUN echo "opcache.jit_buffer_size=100M" >> /usr/local/etc/php/conf.d/appwrite.in
 RUN echo "opcache.jit=1235" >> /usr/local/etc/php/conf.d/appwrite.ini
 
 # Modificar utopia para que superadmin tenga acceso a todo
-RUN echo "81c81" > /tmp/Document_diff.php
-RUN echo "<         return array_unique($this->getAttribute('$read', []));" >> /tmp/Document_diff.php
-RUN echo "---" >> /tmp/Document_diff.php
-RUN echo ">         return array_unique(array_merge($this->getAttribute('$read', []), ['team:superadmin/owner']));" >> /tmp/Document_diff.php
-RUN echo "89c89" >> /tmp/Document_diff.php
-RUN echo "<         return array_unique($this->getAttribute('$write', []));" >> /tmp/Document_diff.php
-RUN echo "---" >> /tmp/Document_diff.php
-RUN echo ">         return array_unique(array_merge($this->getAttribute('$write', []), ['team:superadmin/owner']));" >> /tmp/Document_diff.php
+RUN echo "ODFjODEKPCAgICAgICAgIHJldHVybiBhcnJheV91bmlxdWUoJHRoaXMtPmdldEF0dHJpYnV0ZSgnJHJlYWQnLCBbXSkpOwotLS0KPiAgICAgICAgIHJldHVybiBhcnJheV91bmlxdWUoYXJyYXlfbWVyZ2UoJHRoaXMtPmdldEF0dHJpYnV0ZSgnJHJlYWQnLCBbXSksIFsndGVhbTpzdXBlcmFkbWluL293bmVyJ10pKTsKODljODkKPCAgICAgICAgIHJldHVybiBhcnJheV91bmlxdWUoJHRoaXMtPmdldEF0dHJpYnV0ZSgnJHdyaXRlJywgW10pKTsKLS0tCj4gICAgICAgICByZXR1cm4gYXJyYXlfdW5pcXVlKGFycmF5X21lcmdlKCR0aGlzLT5nZXRBdHRyaWJ1dGUoJyR3cml0ZScsIFtdKSwgWyd0ZWFtOnN1cGVyYWRtaW4vb3duZXInXSkpOwo=" | base64 -d > /tmp/Document_diff.php
 RUN apk add patch
 RUN patch /usr/src/code/vendor//utopia-php/database/src/Database/Document.php /tmp/Document_diff.php
 
