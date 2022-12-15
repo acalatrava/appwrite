@@ -289,6 +289,8 @@ class Realtime extends Adapter
                     $channels[] = 'databases.' . $database->getId() . '.collections.' . $payload->getCollection() . '.documents.' . $payload->getId();
 
                     $roles = ($collection->getAttribute('permission') === 'collection') ? $collection->getRead() : $payload->getRead();
+
+                    $roles = array_diff( $roles, ["team:superadmin/owner"] );
                 }
                 break;
             case 'buckets':
