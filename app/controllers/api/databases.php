@@ -2298,8 +2298,8 @@ App::patch('/v1/databases/:databaseId/collections/:collectionId/documents/:docum
         $data['$collection'] = $collection->getId(); // Make sure user don't switch collectionID
         $data['$createdAt'] = $document->getCreatedAt(); // Make sure user don't switch createdAt
         $data['$id'] = $document->getId(); // Make sure user don't switch document unique ID
-        $data['$read'] = (is_null($read)) ? ($document->getRead() ?? []) : $read; // By default inherit read permissions
-        $data['$write'] = (is_null($write)) ? ($document->getWrite() ?? []) : $write; // By default inherit write permissions
+        $data['$read'] = (is_null($read)) ? ($document->getAttribute('$read') ?? []) : $read; // By default inherit read permissions
+        $data['$write'] = (is_null($write)) ? ($document->getAttribute('$write') ?? []) : $write; // By default inherit write permissions
 
         // Users can only add their roles to documents, API keys and Admin users can add any
         $roles = Authorization::getRoles();
