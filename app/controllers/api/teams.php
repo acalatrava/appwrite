@@ -459,7 +459,13 @@ App::get('/v1/teams/:teamId/memberships')
     ->inject('dbForProject')
     ->action(function (string $teamId, string $search, int $limit, int $offset, string $cursor, string $cursorDirection, string $orderType, Response $response, Database $dbForProject) {
 
-        $team = $dbForProject->getDocument('teams', $teamId);
+        $isPrivilegedUser = Auth::isPrivilegedUser(Authorization::getRoles());
+
+        if ($isPrivilegedUser) {
+            $team = Authorization::skip(fn() => $dbForProject->getDocument('teams', $teamId));
+        } else {
+            $team = $dbForProject->getDocument('teams', $teamId);
+        }
 
         if ($team->isEmpty()) {
             throw new Exception('Team not found', 404, Exception::TEAM_NOT_FOUND);
@@ -532,7 +538,13 @@ App::get('/v1/teams/:teamId/memberships/:membershipId')
     ->inject('dbForProject')
     ->action(function (string $teamId, string $membershipId, Response $response, Database $dbForProject) {
 
-        $team = $dbForProject->getDocument('teams', $teamId);
+        $isPrivilegedUser = Auth::isPrivilegedUser(Authorization::getRoles());
+
+        if ($isPrivilegedUser) {
+            $team = Authorization::skip(fn() => $dbForProject->getDocument('teams', $teamId));
+        } else {
+            $team = $dbForProject->getDocument('teams', $teamId);
+        }
 
         if ($team->isEmpty()) {
             throw new Exception('Team not found', 404, Exception::TEAM_NOT_FOUND);
