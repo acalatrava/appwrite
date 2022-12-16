@@ -148,14 +148,19 @@ App::get('/v1/teams')
         $total = $dbForProject->count('teams', $queries, APP_LIMIT_COUNT);
 
         // Eliminamos el team cuyo ID sea el mismo que el userID ya que será el que se use para el whitelist
+        // También eliminamos si tiene rol de "isolated"
         for ($i=0; $i < count($results); $i++) {
             $team = $results[$i];
-            if ($team->getId() == $user->getId()) {
+            $isIsolated = Authorization::isRole('team:' . $team->getId() . '/isolated');
+
+            if ($team->getId() == $user->getId() || $isIsolated) {
                 array_splice($results, $i, 1);
                 $total--;
-                break;
+                $i--;
             }
+
         }
+
 
         $response->dynamic(new Document([
             'teams' => $results,
