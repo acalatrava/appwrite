@@ -485,7 +485,7 @@ App::get('/v1/teams/:teamId/memberships')
         // Impedimos que los miembros con rol "isolated" puedan listar los miembros del team. Esto se usa para las whitelist.
         $isIsolated = Authorization::isRole('team:' . $team->getId() . '/isolated');
         if ($isIsolated) {
-            throw new Exception('Team not found', 404, Exception::TEAM_NOT_FOUND);
+            throw new Exception('User is not allowed to list memberships', 401, Exception::USER_UNAUTHORIZED);
         }
 
         if (!empty($cursor)) {
@@ -565,6 +565,12 @@ App::get('/v1/teams/:teamId/memberships/:membershipId')
 
         if ($team->isEmpty()) {
             throw new Exception('Team not found', 404, Exception::TEAM_NOT_FOUND);
+        }
+
+        // Impedimos que los miembros con rol "isolated" puedan listar los miembros del team. Esto se usa para las whitelist.
+        $isIsolated = Authorization::isRole('team:' . $team->getId() . '/isolated');
+        if ($isIsolated) {
+            throw new Exception('User is not allowed to get membership', 401, Exception::USER_UNAUTHORIZED);
         }
 
         $membership = $dbForProject->getDocument('memberships', $membershipId);
