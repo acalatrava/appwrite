@@ -127,7 +127,8 @@ App::get('/v1/teams')
     ->param('orderType', 'ASC', new WhiteList(['ASC', 'DESC'], true), 'Order result by ASC or DESC order.', true)
     ->inject('response')
     ->inject('dbForProject')
-    ->action(function (string $search, int $limit, int $offset, string $cursor, string $cursorDirection, string $orderType, Response $response, Database $dbForProject) {
+    ->inject('user')
+    ->action(function (string $search, int $limit, int $offset, string $cursor, string $cursorDirection, string $orderType, Response $response, Database $dbForProject, Document $user) {
 
         if (!empty($cursor)) {
             $cursorTeam = $dbForProject->getDocument('teams', $cursor);
@@ -145,6 +146,16 @@ App::get('/v1/teams')
 
         $results = $dbForProject->find('teams', $queries, $limit, $offset, [], [$orderType], $cursorTeam ?? null, $cursorDirection);
         $total = $dbForProject->count('teams', $queries, APP_LIMIT_COUNT);
+
+        // Eliminamos el team cuyo ID sea el mismo que el userID ya que será el que se use para el whitelist
+        for ($i=0; $i < count($results); $i++) {
+            $team = $results[$i];
+            if ($team->getId() == $user->getId()) {
+                array_splice($results, $i, 1);
+                $total--;
+                break;
+            }
+        }
 
         $response->dynamic(new Document([
             'teams' => $results,
@@ -468,6 +479,12 @@ App::get('/v1/teams/:teamId/memberships')
         }
 
         if ($team->isEmpty()) {
+            throw new Exception('Team not found', 404, Exception::TEAM_NOT_FOUND);
+        }
+
+        // Impedimos que los miembros con rol "isolated" puedan listar los miembros del team. Esto se usa para las whitelist.
+        $isIsolated = Authorization::isRole('team:' . $team->getId() . '/isolated');
+        if ($isIsolated) {
             throw new Exception('Team not found', 404, Exception::TEAM_NOT_FOUND);
         }
 
