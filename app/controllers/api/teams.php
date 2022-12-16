@@ -293,7 +293,7 @@ App::post('/v1/teams/:teamId/memberships')
     ->label('event', 'teams.[teamId].memberships.[membershipId].create')
     ->label('scope', 'teams.write')
     ->label('auth.type', 'invites')
-    ->label('sdk.auth', [APP_AUTH_TYPE_SESSION, APP_AUTH_TYPE_KEY, APP_AUTH_TYPE_JWT])
+    ->label('sdk.auth', [APP_AUTH_TYPE_KEY]) // Modificado para que solo el server pueda crear miembros
     ->label('sdk.namespace', 'teams')
     ->label('sdk.method', 'createMembership')
     ->label('sdk.description', '/docs/references/teams/create-team-membership.md')
