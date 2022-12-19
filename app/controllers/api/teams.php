@@ -293,7 +293,7 @@ App::post('/v1/teams/:teamId/memberships')
     ->label('event', 'teams.[teamId].memberships.[membershipId].create')
     ->label('scope', 'teams.write')
     ->label('auth.type', 'invites')
-    ->label('sdk.auth', [APP_AUTH_TYPE_KEY]) // Modificado para que solo el server pueda crear miembros
+    ->label('sdk.auth', [APP_AUTH_TYPE_SESSION, APP_AUTH_TYPE_KEY, APP_AUTH_TYPE_JWT])
     ->label('sdk.namespace', 'teams')
     ->label('sdk.method', 'createMembership')
     ->label('sdk.description', '/docs/references/teams/create-team-membership.md')
@@ -329,6 +329,15 @@ App::post('/v1/teams/:teamId/memberships')
 
         if ($team->isEmpty()) {
             throw new Exception('Team not found', 404, Exception::TEAM_NOT_FOUND);
+        }
+
+        // Solo permitimos crear miembros si el grupo es el de whitelist y yo soy el propietario (userID==teamID) entonces le damos privilegio de admin.
+        if ($user->getId() == $team->getId()) {
+            $isPrivilegedUser = true;
+        } else {
+            if (!$isPrivilegedUser && !$isAppUser) {
+                throw new Exception('Team not found', 404, Exception::TEAM_NOT_FOUND);
+            }
         }
 
         $invitee = $dbForProject->findOne('users', [new Query('email', Query::TYPE_EQUAL, [$email])]); // Get user by email address
