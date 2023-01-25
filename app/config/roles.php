@@ -62,6 +62,7 @@ return [
             'files.read',
             'locale.read',
             'avatars.read',
+            'execution.write',
         ],
     ],
     Auth::USER_ROLE_MEMBER => [
