@@ -254,91 +254,160 @@ App::post('/v1/runtimes')
                 '/dev/null'
             ] : [];
 
-            $containerId = $orchestration->run(
-                image: $baseImage,
-                name: $runtimeId,
-                hostname: $runtimeId,
-                vars: $vars,
-                command: $entrypoint,
-                labels: [
-                    'openruntimes-id' => $runtimeId,
-                    'openruntimes-type' => 'runtime',
-                    'openruntimes-created' => strval($startTime),
-                    'openruntimes-runtime' => $runtime,
-                ],
-                workdir: $workdir,
-                volumes: [
-                    \dirname($tmpSource) . ':/tmp:rw',
-                    \dirname($tmpBuild) . ':/usr/code:rw'
-                ]
-            );
+            $numAttempts = 0;
+            while(true) {
+                $numAttempts++;
+                if ($numAttempts>9) {
+                    throw new Exception("Too many unsuccesfull attempts", 18391);
+                    
+                }
 
-            if (empty($containerId)) {
-                throw new Exception('Failed to create build container', 500);
-            }
-
-            $orchestration->networkConnect($runtimeId, App::getEnv('OPEN_RUNTIMES_NETWORK', 'appwrite_runtimes'));
-
-            /**
-             * Execute any commands if they were provided
-             */
-            if (!empty($commands)) {
-                $status = $orchestration->execute(
+                $containerId = $orchestration->run(
+                    image: $baseImage,
                     name: $runtimeId,
-                    command: $commands,
-                    stdout: $stdout,
-                    stderr: $stderr,
-                    timeout: App::getEnv('_APP_FUNCTIONS_BUILD_TIMEOUT', 900)
+                    hostname: $runtimeId,
+                    vars: $vars,
+                    command: $entrypoint,
+                    labels: [
+                        'openruntimes-id' => $runtimeId,
+                        'openruntimes-type' => 'runtime',
+                        'openruntimes-created' => strval($startTime),
+                        'openruntimes-runtime' => $runtime,
+                    ],
+                    workdir: $workdir,
+                    volumes: [
+                        \dirname($tmpSource) . ':/tmp:rw',
+                        \dirname($tmpBuild) . ':/usr/code:rw'
+                    ]
                 );
 
-                if (!$status) {
-                    throw new Exception('Failed to build dependenices ' . $stderr, 500);
-                }
-            }
-
-            /**
-             * Move built code to expected build directory
-             */
-            if (!empty($destination)) {
-                // Check if the build was successful by checking if file exists
-                if (!\file_exists($tmpBuild)) {
-                    throw new Exception('Something went wrong during the build process', 500);
+                if (empty($containerId)) {
+                    throw new Exception('Failed to create build container', 500);
                 }
 
-                $destinationDevice = getStorageDevice($destination);
-                $outputPath = $destinationDevice->getPath(\uniqid() . '.' . \pathinfo('code.tar.gz', PATHINFO_EXTENSION));
+                $orchestration->networkConnect($runtimeId, App::getEnv('OPEN_RUNTIMES_NETWORK', 'appwrite_runtimes'));
 
-                $buffer = $localDevice->read($tmpBuild);
-                if (!$destinationDevice->write($outputPath, $buffer, $localDevice->getFileMimeType($tmpBuild))) {
-                    throw new Exception('Failed to move built code to storage', 500);
-                };
+                /**
+                 * Execute any commands if they were provided
+                 */
+                if (!empty($commands)) {
+                    $status = $orchestration->execute(
+                        name: $runtimeId,
+                        command: $commands,
+                        stdout: $stdout,
+                        stderr: $stderr,
+                        timeout: App::getEnv('_APP_FUNCTIONS_BUILD_TIMEOUT', 900)
+                    );
 
-                $container['outputPath'] = $outputPath;
-            }
+                    if (!$status) {
+                        throw new Exception('Failed to build dependenices ' . $stderr, 500);
+                    }
+                }
 
-            if (empty($stdout)) {
-                $stdout = 'Build Successful!';
-            }
+                /**
+                 * Move built code to expected build directory
+                 */
+                if (!empty($destination)) {
+                    // Check if the build was successful by checking if file exists
+                    if (!\file_exists($tmpBuild)) {
+                        throw new Exception('Something went wrong during the build process', 500);
+                    }
 
-            $endTime = \time();
-            $container = array_merge($container, [
-                'status' => 'ready',
-                'response' => \mb_strcut($stdout, 0, 1000000), // Limit to 1MB
-                'stderr' => \mb_strcut($stderr, 0, 1000000), // Limit to 1MB
-                'startTime' => $startTime,
-                'endTime' => $endTime,
-                'duration' => $endTime - $startTime,
-            ]);
+                    $destinationDevice = getStorageDevice($destination);
+                    $outputPath = $destinationDevice->getPath(\uniqid() . '.' . \pathinfo('code.tar.gz', PATHINFO_EXTENSION));
 
-            if (!$remove) {
-                $activeRuntimes->set($runtimeId, [
-                    'id' => $containerId,
-                    'name' => $runtimeId,
-                    'created' => $startTime,
-                    'updated' => $endTime,
-                    'status' => 'Up ' . \round($endTime - $startTime, 2) . 's',
-                    'key' => $secret,
+                    $buffer = $localDevice->read($tmpBuild);
+                    if (!$destinationDevice->write($outputPath, $buffer, $localDevice->getFileMimeType($tmpBuild))) {
+                        throw new Exception('Failed to move built code to storage', 500);
+                    };
+
+                    $container['outputPath'] = $outputPath;
+                }
+
+                if (empty($stdout)) {
+                    $stdout = 'Build Successful!';
+                }
+
+                // Check if container is running
+                $attempt = 0;
+                $runtimeRunning = false;
+                $timeout = 1000;
+                while (true) {
+                    $attempt++;
+                    if ($attempt > 5) {
+                        break;
+                    }
+
+                    $ch = \curl_init();
+                    $body = \json_encode([
+                        'dummy' => true,
+                    ]);
+                    \curl_setopt($ch, CURLOPT_URL, "http://" . $runtimeId . ":3000/");
+                    \curl_setopt($ch, CURLOPT_POST, true);
+                    \curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                    \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    \curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+                    \curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+
+                    \curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                        'Content-Type: application/json',
+                        'Content-Length: ' . \strlen($body),
+                        'x-internal-challenge: ' . $secret,
+                        'host: null'
+                    ]);
+
+                    $executorResponse = \curl_exec($ch);
+
+                    $statusCode = \curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                    $error = \curl_error($ch);
+
+                    $errNo = \curl_errno($ch);
+
+                    \curl_close($ch);
+
+                    if ($errNo === 111) {
+                        sleep(2);
+                        Console::info('Waiting for container to be operative : ' . $runtimeId);
+                        continue;
+                    }
+
+                    if ($errNo === 0) {
+                        $runtimeRunning = true;
+                        break;
+                    }
+
+                }
+
+                if (!$runtimeRunning) {
+                    // Lo intentamos de nuevo
+                    $orchestration->remove($containerId, true);
+                    Console::info('Container not initialized on time, recreating container : ' . $runtimeId);
+                    continue;
+                } 
+
+                $endTime = \time();
+                $container = array_merge($container, [
+                    'status' => 'ready',
+                    'response' => \mb_strcut($stdout, 0, 1000000), // Limit to 1MB
+                    'stderr' => \mb_strcut($stderr, 0, 1000000), // Limit to 1MB
+                    'startTime' => $startTime,
+                    'endTime' => $endTime,
+                    'duration' => $endTime - $startTime,
                 ]);
+
+                if (!$remove) {
+                    $activeRuntimes->set($runtimeId, [
+                        'id' => $containerId,
+                        'name' => $runtimeId,
+                        'created' => $startTime,
+                        'updated' => $endTime,
+                        'status' => 'Up ' . \round($endTime - $startTime, 2) . 's',
+                        'key' => $secret,
+                    ]);
+                }
+
+                break;
             }
 
             Console::success('Build Stage completed in ' . ($endTime - $startTime) . ' seconds');
