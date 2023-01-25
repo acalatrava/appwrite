@@ -254,160 +254,91 @@ App::post('/v1/runtimes')
                 '/dev/null'
             ] : [];
 
-            $numAttempts = 0;
-            while(true) {
-                $numAttempts++;
-                if ($numAttempts>9) {
-                    throw new Exception("Too many unsuccesfull attempts", 18391);
-                    
-                }
+            $containerId = $orchestration->run(
+                image: $baseImage,
+                name: $runtimeId,
+                hostname: $runtimeId,
+                vars: $vars,
+                command: $entrypoint,
+                labels: [
+                    'openruntimes-id' => $runtimeId,
+                    'openruntimes-type' => 'runtime',
+                    'openruntimes-created' => strval($startTime),
+                    'openruntimes-runtime' => $runtime,
+                ],
+                workdir: $workdir,
+                volumes: [
+                    \dirname($tmpSource) . ':/tmp:rw',
+                    \dirname($tmpBuild) . ':/usr/code:rw'
+                ]
+            );
 
-                $containerId = $orchestration->run(
-                    image: $baseImage,
+            if (empty($containerId)) {
+                throw new Exception('Failed to create build container', 500);
+            }
+
+            $orchestration->networkConnect($runtimeId, App::getEnv('OPEN_RUNTIMES_NETWORK', 'appwrite_runtimes'));
+
+            /**
+             * Execute any commands if they were provided
+             */
+            if (!empty($commands)) {
+                $status = $orchestration->execute(
                     name: $runtimeId,
-                    hostname: $runtimeId,
-                    vars: $vars,
-                    command: $entrypoint,
-                    labels: [
-                        'openruntimes-id' => $runtimeId,
-                        'openruntimes-type' => 'runtime',
-                        'openruntimes-created' => strval($startTime),
-                        'openruntimes-runtime' => $runtime,
-                    ],
-                    workdir: $workdir,
-                    volumes: [
-                        \dirname($tmpSource) . ':/tmp:rw',
-                        \dirname($tmpBuild) . ':/usr/code:rw'
-                    ]
+                    command: $commands,
+                    stdout: $stdout,
+                    stderr: $stderr,
+                    timeout: App::getEnv('_APP_FUNCTIONS_BUILD_TIMEOUT', 900)
                 );
 
-                if (empty($containerId)) {
-                    throw new Exception('Failed to create build container', 500);
+                if (!$status) {
+                    throw new Exception('Failed to build dependenices ' . $stderr, 500);
+                }
+            }
+
+            /**
+             * Move built code to expected build directory
+             */
+            if (!empty($destination)) {
+                // Check if the build was successful by checking if file exists
+                if (!\file_exists($tmpBuild)) {
+                    throw new Exception('Something went wrong during the build process', 500);
                 }
 
-                $orchestration->networkConnect($runtimeId, App::getEnv('OPEN_RUNTIMES_NETWORK', 'appwrite_runtimes'));
+                $destinationDevice = getStorageDevice($destination);
+                $outputPath = $destinationDevice->getPath(\uniqid() . '.' . \pathinfo('code.tar.gz', PATHINFO_EXTENSION));
 
-                /**
-                 * Execute any commands if they were provided
-                 */
-                if (!empty($commands)) {
-                    $status = $orchestration->execute(
-                        name: $runtimeId,
-                        command: $commands,
-                        stdout: $stdout,
-                        stderr: $stderr,
-                        timeout: App::getEnv('_APP_FUNCTIONS_BUILD_TIMEOUT', 900)
-                    );
+                $buffer = $localDevice->read($tmpBuild);
+                if (!$destinationDevice->write($outputPath, $buffer, $localDevice->getFileMimeType($tmpBuild))) {
+                    throw new Exception('Failed to move built code to storage', 500);
+                };
 
-                    if (!$status) {
-                        throw new Exception('Failed to build dependenices ' . $stderr, 500);
-                    }
-                }
+                $container['outputPath'] = $outputPath;
+            }
 
-                /**
-                 * Move built code to expected build directory
-                 */
-                if (!empty($destination)) {
-                    // Check if the build was successful by checking if file exists
-                    if (!\file_exists($tmpBuild)) {
-                        throw new Exception('Something went wrong during the build process', 500);
-                    }
+            if (empty($stdout)) {
+                $stdout = 'Build Successful!';
+            }
 
-                    $destinationDevice = getStorageDevice($destination);
-                    $outputPath = $destinationDevice->getPath(\uniqid() . '.' . \pathinfo('code.tar.gz', PATHINFO_EXTENSION));
+            $endTime = \time();
+            $container = array_merge($container, [
+                'status' => 'ready',
+                'response' => \mb_strcut($stdout, 0, 1000000), // Limit to 1MB
+                'stderr' => \mb_strcut($stderr, 0, 1000000), // Limit to 1MB
+                'startTime' => $startTime,
+                'endTime' => $endTime,
+                'duration' => $endTime - $startTime,
+            ]);
 
-                    $buffer = $localDevice->read($tmpBuild);
-                    if (!$destinationDevice->write($outputPath, $buffer, $localDevice->getFileMimeType($tmpBuild))) {
-                        throw new Exception('Failed to move built code to storage', 500);
-                    };
-
-                    $container['outputPath'] = $outputPath;
-                }
-
-                if (empty($stdout)) {
-                    $stdout = 'Build Successful!';
-                }
-
-                // Check if container is running
-                $attempt = 0;
-                $runtimeRunning = false;
-                $timeout = 1000;
-                while (true) {
-                    $attempt++;
-                    if ($attempt > 5) {
-                        break;
-                    }
-
-                    $ch = \curl_init();
-                    $body = \json_encode([
-                        'dummy' => true,
-                    ]);
-                    \curl_setopt($ch, CURLOPT_URL, "http://" . $runtimeId . ":3000/");
-                    \curl_setopt($ch, CURLOPT_POST, true);
-                    \curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-                    \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    \curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-                    \curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-
-                    \curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                        'Content-Type: application/json',
-                        'Content-Length: ' . \strlen($body),
-                        'x-internal-challenge: ' . $secret,
-                        'host: null'
-                    ]);
-
-                    $executorResponse = \curl_exec($ch);
-
-                    $statusCode = \curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                    $error = \curl_error($ch);
-
-                    $errNo = \curl_errno($ch);
-
-                    \curl_close($ch);
-
-                    if ($errNo === 111) {
-                        sleep(2);
-                        Console::info('Waiting for container to be operative : ' . $runtimeId);
-                        continue;
-                    }
-
-                    if ($errNo === 0) {
-                        $runtimeRunning = true;
-                        break;
-                    }
-
-                }
-
-                if (!$runtimeRunning) {
-                    // Lo intentamos de nuevo
-                    $orchestration->remove($containerId, true);
-                    Console::info('Container not initialized on time, recreating container : ' . $runtimeId);
-                    continue;
-                } 
-
-                $endTime = \time();
-                $container = array_merge($container, [
-                    'status' => 'ready',
-                    'response' => \mb_strcut($stdout, 0, 1000000), // Limit to 1MB
-                    'stderr' => \mb_strcut($stderr, 0, 1000000), // Limit to 1MB
-                    'startTime' => $startTime,
-                    'endTime' => $endTime,
-                    'duration' => $endTime - $startTime,
+            if (!$remove) {
+                $activeRuntimes->set($runtimeId, [
+                    'id' => $containerId,
+                    'name' => $runtimeId,
+                    'created' => $startTime,
+                    'updated' => $endTime,
+                    'status' => 'Up ' . \round($endTime - $startTime, 2) . 's',
+                    'key' => $secret,
                 ]);
-
-                if (!$remove) {
-                    $activeRuntimes->set($runtimeId, [
-                        'id' => $containerId,
-                        'name' => $runtimeId,
-                        'created' => $startTime,
-                        'updated' => $endTime,
-                        'status' => 'Up ' . \round($endTime - $startTime, 2) . 's',
-                        'key' => $secret,
-                    ]);
-                }
-
-                break;
             }
 
             Console::success('Build Stage completed in ' . ($endTime - $startTime) . ' seconds');
@@ -525,10 +456,11 @@ App::post('/v1/execution')
     ->param('vars', [], new Assoc(), 'Environment variables required for the build.')
     ->param('data', '', new Text(8192), 'Data to be forwarded to the function, this is user specified.', true)
     ->param('timeout', 15, new Range(1, (int) App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900)), 'Function maximum execution time in seconds.')
+    ->inject('orchestrationPool')
     ->inject('activeRuntimes')
     ->inject('response')
     ->action(
-        function (string $runtimeId, array $vars, string $data, $timeout, $activeRuntimes, Response $response) {
+        function (string $runtimeId, array $vars, string $data, $timeout, $orchestrationPool, $activeRuntimes, Response $response) {
             if (!$activeRuntimes->exists($runtimeId)) {
                 throw new Exception('Runtime not found. Please create the runtime.', 404);
             }
@@ -554,56 +486,68 @@ App::post('/v1/execution')
 
             Console::info('Executing Runtime: ' . $runtimeId);
 
-            $execution = [];
-            $executionStart = \microtime(true);
-            $stdout = '';
-            $stderr = '';
-            $statusCode = 0;
-            $errNo = -1;
-            $executorResponse = '';
+            $attempts = 0;
+            while(true) { 
+                $attempts++;
+                if ($attempts > 5) {
+                    try {
+                        $orchestration = $orchestrationPool->get();
+                        $orchestration->remove($runtimeId, true);
+                        $activeRuntimes->del($runtimeId);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
 
-            $timeout ??= (int) App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900);
+                    throw new Exception("Too many attempts", 406);
+                }
 
-            $ch = \curl_init();
-            $body = \json_encode([
-                'env' => $vars,
-                'payload' => $data,
-                'timeout' => $timeout
-            ]);
-            \curl_setopt($ch, CURLOPT_URL, "http://" . $runtimeId . ":3000/");
-            \curl_setopt($ch, CURLOPT_POST, true);
-            \curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-            \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            \curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-            \curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                $execution = [];
+                $executionStart = \microtime(true);
+                $stdout = '';
+                $stderr = '';
+                $statusCode = 0;
+                $errNo = -1;
+                $executorResponse = '';
 
-            \curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Content-Length: ' . \strlen($body),
-                'x-internal-challenge: ' . $secret,
-                'host: null'
-            ]);
+                $timeout ??= (int) App::getEnv('_APP_FUNCTIONS_TIMEOUT', 900);
 
-            $executorResponse = \curl_exec($ch);
+                $ch = \curl_init();
+                $body = \json_encode([
+                    'env' => $vars,
+                    'payload' => $data,
+                    'timeout' => $timeout
+                ]);
+                \curl_setopt($ch, CURLOPT_URL, "http://" . $runtimeId . ":3000/");
+                \curl_setopt($ch, CURLOPT_POST, true);
+                \curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                \curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+                \curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 
-            $statusCode = \curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                \curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Content-Type: application/json',
+                    'Content-Length: ' . \strlen($body),
+                    'x-internal-challenge: ' . $secret,
+                    'host: null'
+                ]);
 
-            $error = \curl_error($ch);
+                $executorResponse = \curl_exec($ch);
 
-            $errNo = \curl_errno($ch);
+                $statusCode = \curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-            \curl_close($ch);
+                $error = \curl_error($ch);
 
-            switch (true) {
-                /** No Error. */
-                case $errNo === 0:
+                $errNo = \curl_errno($ch);
+
+                \curl_close($ch);
+
+                if ($errNo === 0) {
                     break;
-                /** Runtime not ready for requests yet. 111 is the swoole error code for Connection Refused - see https://openswoole.com/docs/swoole-error-code */
-                case $errNo === 111:
-                    throw new Exception('An internal curl error has occurred within the executor! Error Msg: ' . $error, 406);
-                /** Any other CURL error */
-                default:
-                    throw new Exception('An internal curl error has occurred within the executor! Error Msg: ' . $error, 500);
+                }
+
+                Console::info('Executing Runtime: ' . $runtimeId . ' error:' .$errNo.', attempt:' . $attempts);
+
+                sleep(2);
             }
 
             switch (true) {
