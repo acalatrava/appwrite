@@ -1906,6 +1906,30 @@ App::post('/v1/databases/:databaseId/collections/:collectionId/documents')
             }
         }
 
+        // Para uso interno, si el documento tiene el atributo timestamp lo forzamos al timestamp del server
+        $curTimeMicro = explode(" ",microtime());
+        $curTimeMicro = $curTimeMicro[1] + $curTimeMicro[0];
+        $curTimeMicro = str_replace(".","",$curTimeMicro);
+        while (strlen($curTimeMicro)<16) {
+            $curTimeMicro = $curTimeMicro."0";
+        }
+        $dataKeys=array_keys($data);
+        foreach($dataKeys as $key)
+        {
+            if (strtolower($key) == "timestamp") {
+                // Comprobamos en qué formato está
+                if (strlen($data[$key])<=10) {
+                    $data[$key] = time();
+                } elseif (strlen($data[$key])<=13) {
+                    $data[$key] = substr($curTimeMicro,0,13);
+                } else {
+                    $data[$key] = $curTimeMicro;
+                }
+                
+                break;
+            }
+        }
+
         try {
             if ($collection->getAttribute('permission') === 'collection' || $collection->getAttribute('permission') === 'document-unrestricted') {
                 /** @var Document $document */
