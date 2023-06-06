@@ -331,22 +331,22 @@ class CertificatesV1 extends Worker
             array_multisort(array_map('filemtime', $domain_path), SORT_NUMERIC, SORT_DESC, $domain_path);
         }
 
-        $domain = basename($domain_path[0]);
+        $leDomainPath = basename($domain_path[0]);
 
         // Move generated files from certbot into our storage
-        if (!@\rename('/etc/letsencrypt/live/' . $domain . '/cert.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/cert.pem')) {
+        if (!@\rename('/etc/letsencrypt/live/' . $leDomainPath . '/cert.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/cert.pem')) {
             throw new Exception('Failed to rename certificate cert.pem. Let\'s Encrypt log: ' . $letsEncryptData['stderr'] . ' ; ' . $letsEncryptData['stdout']);
         }
 
-        if (!@\rename('/etc/letsencrypt/live/' . $domain . '/chain.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/chain.pem')) {
+        if (!@\rename('/etc/letsencrypt/live/' . $leDomainPath . '/chain.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/chain.pem')) {
             throw new Exception('Failed to rename certificate chain.pem. Let\'s Encrypt log: ' . $letsEncryptData['stderr'] . ' ; ' . $letsEncryptData['stdout']);
         }
 
-        if (!@\rename('/etc/letsencrypt/live/' . $domain . '/fullchain.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/fullchain.pem')) {
+        if (!@\rename('/etc/letsencrypt/live/' . $leDomainPath . '/fullchain.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/fullchain.pem')) {
             throw new Exception('Failed to rename certificate fullchain.pem. Let\'s Encrypt log: ' . $letsEncryptData['stderr'] . ' ; ' . $letsEncryptData['stdout']);
         }
 
-        if (!@\rename('/etc/letsencrypt/live/' . $domain . '/privkey.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/privkey.pem')) {
+        if (!@\rename('/etc/letsencrypt/live/' . $leDomainPath . '/privkey.pem', APP_STORAGE_CERTIFICATES . '/' . $domain . '/privkey.pem')) {
             throw new Exception('Failed to rename certificate privkey.pem. Let\'s Encrypt log: ' . $letsEncryptData['stderr'] . ' ; ' . $letsEncryptData['stdout']);
         }
 
