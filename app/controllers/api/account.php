@@ -173,6 +173,12 @@ App::post('/v1/account/sessions/email')
             throw new Exception('Invalid credentials. User is blocked', 401, Exception::USER_BLOCKED); // User is in status blocked
         }
 
+        // Comprobamos si existe una sesión activa
+        $sessions = $user->getAttribute('sessions', []);
+        if (count($sessions) > 0) {
+            throw new Exception('Session is active. Contact your administrator.', 401, Exception::USER_SESSION_ALREADY_EXISTS); // User is in status blocked
+        }
+
         $detector = new Detector($request->getUserAgent('UNKNOWN'));
         $record = $geodb->get($request->getIP());
         $expiry = \time() + Auth::TOKEN_EXPIRATION_LOGIN_LONG;
@@ -659,6 +665,12 @@ App::post('/v1/account/sessions/magic-url')
             ])));
         }
 
+        // Comprobamos si existe una sesión activa
+        $sessions = $user->getAttribute('sessions', []);
+        if (count($sessions) > 0) {
+            throw new Exception('Session is active. Contact your administrator.', 401, Exception::USER_SESSION_ALREADY_EXISTS); // User is in status blocked
+        }
+
         $loginSecret = Auth::tokenGenerator();
 
         $expire = \time() + Auth::TOKEN_EXPIRATION_CONFIRM;
@@ -756,6 +768,12 @@ App::put('/v1/account/sessions/magic-url')
 
         if (!$token) {
             throw new Exception('Invalid login token', 401, Exception::USER_INVALID_TOKEN);
+        }
+
+        // Comprobamos si existe una sesión activa
+        $sessions = $user->getAttribute('sessions', []);
+        if (count($sessions) > 0) {
+            throw new Exception('Session is active. Contact your administrator.', 401, Exception::USER_SESSION_ALREADY_EXISTS); // User is in status blocked
         }
 
         $detector = new Detector($request->getUserAgent('UNKNOWN'));
