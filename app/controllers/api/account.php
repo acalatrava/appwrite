@@ -174,6 +174,7 @@ App::post('/v1/account/sessions/email')
         }
 
         // Comprobamos si existe una sesión activa
+        $user = $dbForProject->findOne('users', [new Query('email', Query::TYPE_EQUAL, [$email])]);
         $sessions = $user->getAttribute('sessions', []);
         if (count($sessions) > 0) {
             throw new Exception('Session is active. Contact your administrator.', 401, Exception::USER_SESSION_ALREADY_EXISTS); // User is in status blocked
