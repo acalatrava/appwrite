@@ -1459,6 +1459,8 @@ App::patch('/v1/account/name')
     ->inject('events')
     ->action(function (string $name, Response $response, Document $user, Database $dbForProject, Audit $audits, Stats $usage, Event $events) {
 
+        throw new Exception('Only admin can update name', 409, Exception::ATTRIBUTE_ALREADY_EXISTS);
+
         $user = $dbForProject->updateDocument('users', $user->getId(), $user
             ->setAttribute('name', $name)
             ->setAttribute('search', implode(' ', [$user->getId(), $name, $user->getAttribute('email')])));
