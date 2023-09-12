@@ -562,6 +562,26 @@ App::patch('/v1/users/:userId/password')
             ->setParam('userId', $user->getId())
         ;
 
+        // Delete all sessions
+        $sessions = $user->getAttribute('sessions', []);
+
+        foreach ($sessions as $key => $session) { /** @var Document $session */
+            $dbForProject->deleteDocument('sessions', $session->getId());
+            //TODO: fix this
+        }
+
+        $dbForProject->deleteCachedDocument('users', $user->getId());
+
+        $events
+            ->setParam('userId', $user->getId())
+            ->setPayload($response->output($user, Response::MODEL_USER))
+        ;
+
+        $usage
+            ->setParam('users.update', 1)
+            ->setParam('users.sessions.delete', 1)
+        ;
+
         $response->dynamic($user, Response::MODEL_USER);
     });
 
