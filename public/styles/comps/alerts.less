@@ -30,7 +30,8 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
         opacity: .95;
 
-        span, a {
+        span,
+        a {
           font-weight: 600;
         }
 
@@ -53,12 +54,12 @@
         }
 
         &.error {
-          color: #ffffff!important;
-          background: var(--config-color-danger)!important;
+          color: #ffffff !important;
+          background: var(--config-color-danger) !important;
 
           a {
-            color: #ffffff!important;
-            border-bottom: dotted 1px #ffffff!important;
+            color: #ffffff !important;
+            border-bottom: dotted 1px #ffffff !important;
           }
 
           i {
@@ -68,9 +69,9 @@
         }
 
         &.success {
-          color: #ffffff!important;
-          background: var(--config-color-success)!important;
-          
+          color: #ffffff !important;
+          background: var(--config-color-success) !important;
+
           a {
             color: #ffffff;
             border-bottom: dotted 1px #ffffff;
@@ -83,17 +84,17 @@
         }
 
         &.warning {
-          color: var(--config-color-normal)!important;
-          background: var(--config-color-warning)!important;
+          color: var(--config-color-normal) !important;
+          background: var(--config-color-warning) !important;
 
           a {
-            color: var(--config-color-normal)!important;
-            border-bottom: dotted 1px var(--config-color-normal)!important;
+            color: var(--config-color-normal) !important;
+            border-bottom: dotted 1px var(--config-color-normal) !important;
           }
 
           i {
             color: #ffffff;
-            background: var(--config-color-normal)!important;
+            background: var(--config-color-normal) !important;
           }
         }
 
@@ -109,22 +110,24 @@
   }
 
   .cookie-alert {
-    background: var(--config-color-focus-fade)!important;
+    background: var(--config-color-focus-fade) !important;
     color: var(--config-color-focus);
+    display: none;
 
     a {
       color: var(--config-color-focus);
       font-weight: 400;
-      border-bottom: dotted 1px var(--config-color-focus)!important;
+      border-bottom: dotted 1px var(--config-color-focus) !important;
     }
 
     i {
-      color: var(--config-color-focus-fade)!important;
-      background: var(--config-color-focus)!important;
+      color: var(--config-color-focus-fade) !important;
+      background: var(--config-color-focus) !important;
     }
   }
 
-  @media @phones, @tablets {
+  @media @phones,
+  @tablets {
     ul {
       top: auto;
       bottom: 0;
@@ -148,7 +151,8 @@
       .func-start(220px);
     }
 
-    @media @phones, @tablets {
+    @media @phones,
+    @tablets {
       ul {
         .func-start(0);
       }
