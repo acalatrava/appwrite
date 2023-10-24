@@ -2361,7 +2361,7 @@ App::patch('/v1/databases/:databaseId/collections/:collectionId/documents/:docum
         }
 
         try {
-            if ($collection->getAttribute('permission') === 'collection' || $collection->getAttribute('permission') === 'document-unrestricted') {
+            if ($collection->getAttribute('permission') === 'collection') {
                 /** @var Document $document */
                 $document = Authorization::skip(fn() => $dbForProject->updateDocument('database_' . $database->getInternalId() . '_collection_' . $collection->getInternalId(), $document->getId(), new Document($data)));
             } else {
