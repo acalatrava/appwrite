@@ -547,7 +547,7 @@ App::post('/v1/execution')
 
                 Console::info('Executing Runtime: ' . $runtimeId . ' error:' .$errNo.', attempt:' . $attempts);
 
-                sleep(2);
+                sleep(4);
             }
 
             switch (true) {
