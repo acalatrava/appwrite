@@ -158,7 +158,7 @@ App::post('/v1/account/sessions/email')
     ->inject('usage')
     ->inject('events')
     ->inject('project')
-    ->action(function (string $email, string $password, Request $request, Response $response, Database $dbForProject, Locale $locale, Reader $geodb, Audit $audits, Stats $usage, Event $events) {
+    ->action(function (string $email, string $password, Request $request, Response $response, Database $dbForProject, Locale $locale, Reader $geodb, Audit $audits, Stats $usage, Event $events, Document $project) {
 
         $email = \strtolower($email);
         $protocol = $request->getProtocol();
