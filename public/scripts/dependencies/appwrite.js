@@ -26,10 +26,10 @@
         });
     }
 
-    class AppwriteException extends Error {
+    class KseException extends Error {
         constructor(message, code = 0, type = '', response = '') {
             super(message);
-            this.name = 'AppwriteException';
+            this.name = 'KseException';
             this.message = message;
             this.code = code;
             this.type = type;
@@ -184,7 +184,7 @@
                  *
                  * Get currently logged in user data as JSON object.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 get: () => __awaiter(this, void 0, void 0, function* () {
@@ -209,18 +209,18 @@
                  * @param {string} email
                  * @param {string} password
                  * @param {string} name
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 create: (userId, email, password, name) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof email === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "email"');
+                        throw new KseException('Missing required parameter: "email"');
                     }
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     let path = '/account';
                     let payload = {};
@@ -255,15 +255,15 @@
                  *
                  * @param {string} email
                  * @param {string} password
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateEmail: (email, password) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof email === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "email"');
+                        throw new KseException('Missing required parameter: "email"');
                     }
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     let path = '/account/email';
                     let payload = {};
@@ -287,7 +287,7 @@
                  * from its creation and will be invalid if the user will logout in that time
                  * frame.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createJWT: () => __awaiter(this, void 0, void 0, function* () {
@@ -306,7 +306,7 @@
                  *
                  * @param {number} limit
                  * @param {number} offset
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getLogs: (limit, offset) => __awaiter(this, void 0, void 0, function* () {
@@ -329,12 +329,12 @@
                  * Update currently logged in user account name.
                  *
                  * @param {string} name
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateName: (name) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/account/name';
                     let payload = {};
@@ -355,12 +355,12 @@
                  *
                  * @param {string} password
                  * @param {string} oldPassword
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePassword: (password, oldPassword) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     let path = '/account/password';
                     let payload = {};
@@ -385,15 +385,15 @@
                  *
                  * @param {string} number
                  * @param {string} password
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePhone: (number, password) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof number === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "number"');
+                        throw new KseException('Missing required parameter: "number"');
                     }
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     let path = '/account/phone';
                     let payload = {};
@@ -413,7 +413,7 @@
                  *
                  * Get currently logged in user preferences as a key-value object.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getPrefs: () => __awaiter(this, void 0, void 0, function* () {
@@ -432,12 +432,12 @@
                  * size is 64kB and throws error if exceeded.
                  *
                  * @param {object} prefs
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePrefs: (prefs) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof prefs === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "prefs"');
+                        throw new KseException('Missing required parameter: "prefs"');
                     }
                     let path = '/account/prefs';
                     let payload = {};
@@ -463,15 +463,15 @@
                  *
                  * @param {string} email
                  * @param {string} url
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createRecovery: (email, url) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof email === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "email"');
+                        throw new KseException('Missing required parameter: "email"');
                     }
                     if (typeof url === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "url"');
+                        throw new KseException('Missing required parameter: "url"');
                     }
                     let path = '/account/recovery';
                     let payload = {};
@@ -503,21 +503,21 @@
                  * @param {string} secret
                  * @param {string} password
                  * @param {string} passwordAgain
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateRecovery: (userId, secret, password, passwordAgain) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof secret === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "secret"');
+                        throw new KseException('Missing required parameter: "secret"');
                     }
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     if (typeof passwordAgain === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "passwordAgain"');
+                        throw new KseException('Missing required parameter: "passwordAgain"');
                     }
                     let path = '/account/recovery';
                     let payload = {};
@@ -544,7 +544,7 @@
                  * Get currently logged in user list of active sessions across different
                  * devices.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getSessions: () => __awaiter(this, void 0, void 0, function* () {
@@ -561,7 +561,7 @@
                  * Delete all sessions from the user account and remove any sessions cookies
                  * from the end client.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteSessions: () => __awaiter(this, void 0, void 0, function* () {
@@ -582,7 +582,7 @@
                  * password](/docs/client/account#accountUpdateEmail) or create an [OAuth2
                  * session](/docs/client/account#accountCreateOAuth2Session).
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createAnonymousSession: () => __awaiter(this, void 0, void 0, function* () {
@@ -601,15 +601,15 @@
                  *
                  * @param {string} email
                  * @param {string} password
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createEmailSession: (email, password) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof email === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "email"');
+                        throw new KseException('Missing required parameter: "email"');
                     }
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     let path = '/account/sessions/email';
                     let payload = {};
@@ -641,15 +641,15 @@
                  * @param {string} userId
                  * @param {string} email
                  * @param {string} url
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createMagicURLSession: (userId, email, url) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof email === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "email"');
+                        throw new KseException('Missing required parameter: "email"');
                     }
                     let path = '/account/sessions/magic-url';
                     let payload = {};
@@ -684,15 +684,15 @@
                  *
                  * @param {string} userId
                  * @param {string} secret
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateMagicURLSession: (userId, secret) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof secret === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "secret"');
+                        throw new KseException('Missing required parameter: "secret"');
                     }
                     let path = '/account/sessions/magic-url';
                     let payload = {};
@@ -727,12 +727,12 @@
                  * @param {string} success
                  * @param {string} failure
                  * @param {string[]} scopes
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {void|string}
                  */
                 createOAuth2Session: (provider, success, failure, scopes) => {
                     if (typeof provider === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "provider"');
+                        throw new KseException('Missing required parameter: "provider"');
                     }
                     let path = '/account/sessions/oauth2/{provider}'.replace('{provider}', provider);
                     let payload = {};
@@ -768,15 +768,15 @@
                  *
                  * @param {string} userId
                  * @param {string} number
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createPhoneSession: (userId, number) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof number === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "number"');
+                        throw new KseException('Missing required parameter: "number"');
                     }
                     let path = '/account/sessions/phone';
                     let payload = {};
@@ -808,15 +808,15 @@
                  *
                  * @param {string} userId
                  * @param {string} secret
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePhoneSession: (userId, secret) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof secret === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "secret"');
+                        throw new KseException('Missing required parameter: "secret"');
                     }
                     let path = '/account/sessions/phone';
                     let payload = {};
@@ -838,12 +838,12 @@
                  * Inputting 'current' will return the current session being used.
                  *
                  * @param {string} sessionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getSession: (sessionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof sessionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "sessionId"');
+                        throw new KseException('Missing required parameter: "sessionId"');
                     }
                     let path = '/account/sessions/{sessionId}'.replace('{sessionId}', sessionId);
                     let payload = {};
@@ -860,12 +860,12 @@
                  * "refresh" the access token.
                  *
                  * @param {string} sessionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateSession: (sessionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof sessionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "sessionId"');
+                        throw new KseException('Missing required parameter: "sessionId"');
                     }
                     let path = '/account/sessions/{sessionId}'.replace('{sessionId}', sessionId);
                     let payload = {};
@@ -883,12 +883,12 @@
                  *
                  *
                  * @param {string} sessionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteSession: (sessionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof sessionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "sessionId"');
+                        throw new KseException('Missing required parameter: "sessionId"');
                     }
                     let path = '/account/sessions/{sessionId}'.replace('{sessionId}', sessionId);
                     let payload = {};
@@ -904,7 +904,7 @@
                  * record is not deleted but permanently blocked from any access. To
                  * completely delete a user, use the Users API instead.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateStatus: () => __awaiter(this, void 0, void 0, function* () {
@@ -935,12 +935,12 @@
                  *
                  *
                  * @param {string} url
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createVerification: (url) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof url === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "url"');
+                        throw new KseException('Missing required parameter: "url"');
                     }
                     let path = '/account/verification';
                     let payload = {};
@@ -962,15 +962,15 @@
                  *
                  * @param {string} userId
                  * @param {string} secret
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateVerification: (userId, secret) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof secret === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "secret"');
+                        throw new KseException('Missing required parameter: "secret"');
                     }
                     let path = '/account/verification';
                     let payload = {};
@@ -996,7 +996,7 @@
                  * process](/docs/client/account#accountUpdatePhoneVerification). The
                  * verification link sent to the user's phone number is valid for 15 minutes.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createPhoneVerification: () => __awaiter(this, void 0, void 0, function* () {
@@ -1017,15 +1017,15 @@
                  *
                  * @param {string} userId
                  * @param {string} secret
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePhoneVerification: (userId, secret) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof secret === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "secret"');
+                        throw new KseException('Missing required parameter: "secret"');
                     }
                     let path = '/account/verification/phone';
                     let payload = {};
@@ -1059,12 +1059,12 @@
                  * @param {number} width
                  * @param {number} height
                  * @param {number} quality
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getBrowser: (code, width, height, quality) => {
                     if (typeof code === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "code"');
+                        throw new KseException('Missing required parameter: "code"');
                     }
                     let path = '/avatars/browsers/{code}'.replace('{code}', code);
                     let payload = {};
@@ -1101,12 +1101,12 @@
                  * @param {number} width
                  * @param {number} height
                  * @param {number} quality
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getCreditCard: (code, width, height, quality) => {
                     if (typeof code === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "code"');
+                        throw new KseException('Missing required parameter: "code"');
                     }
                     let path = '/avatars/credit-cards/{code}'.replace('{code}', code);
                     let payload = {};
@@ -1134,12 +1134,12 @@
                  *
                  *
                  * @param {string} url
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getFavicon: (url) => {
                     if (typeof url === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "url"');
+                        throw new KseException('Missing required parameter: "url"');
                     }
                     let path = '/avatars/favicon';
                     let payload = {};
@@ -1170,12 +1170,12 @@
                  * @param {number} width
                  * @param {number} height
                  * @param {number} quality
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getFlag: (code, width, height, quality) => {
                     if (typeof code === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "code"');
+                        throw new KseException('Missing required parameter: "code"');
                     }
                     let path = '/avatars/flags/{code}'.replace('{code}', code);
                     let payload = {};
@@ -1212,12 +1212,12 @@
                  * @param {string} url
                  * @param {number} width
                  * @param {number} height
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getImage: (url, width, height) => {
                     if (typeof url === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "url"');
+                        throw new KseException('Missing required parameter: "url"');
                     }
                     let path = '/avatars/image';
                     let payload = {};
@@ -1262,7 +1262,7 @@
                  * @param {number} height
                  * @param {string} color
                  * @param {string} background
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getInitials: (name, width, height, color, background) => {
@@ -1301,12 +1301,12 @@
                  * @param {number} size
                  * @param {number} margin
                  * @param {boolean} download
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getQR: (text, size, margin, download) => {
                     if (typeof text === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "text"');
+                        throw new KseException('Missing required parameter: "text"');
                     }
                     let path = '/avatars/qr';
                     let payload = {};
@@ -1341,7 +1341,7 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 list: (search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
@@ -1376,15 +1376,15 @@
                  *
                  * @param {string} databaseId
                  * @param {string} name
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 create: (databaseId, name) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/databases';
                     let payload = {};
@@ -1404,7 +1404,7 @@
                  *
                  *
                  * @param {string} range
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getUsage: (range) => __awaiter(this, void 0, void 0, function* () {
@@ -1423,12 +1423,12 @@
                  *
                  *
                  * @param {string} databaseId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 get: (databaseId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     let path = '/databases/{databaseId}'.replace('{databaseId}', databaseId);
                     let payload = {};
@@ -1443,15 +1443,15 @@
                  *
                  * @param {string} databaseId
                  * @param {string} name
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 update: (databaseId, name) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/databases/{databaseId}'.replace('{databaseId}', databaseId);
                     let payload = {};
@@ -1468,12 +1468,12 @@
                  *
                  *
                  * @param {string} databaseId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 delete: (databaseId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     let path = '/databases/{databaseId}'.replace('{databaseId}', databaseId);
                     let payload = {};
@@ -1497,12 +1497,12 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listCollections: (databaseId, search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     let path = '/databases/{databaseId}/collections'.replace('{databaseId}', databaseId);
                     let payload = {};
@@ -1540,27 +1540,27 @@
                  * @param {string} permission
                  * @param {string[]} read
                  * @param {string[]} write
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createCollection: (databaseId, collectionId, name, permission, read, write) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof permission === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "permission"');
+                        throw new KseException('Missing required parameter: "permission"');
                     }
                     if (typeof read === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "read"');
+                        throw new KseException('Missing required parameter: "read"');
                     }
                     if (typeof write === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "write"');
+                        throw new KseException('Missing required parameter: "write"');
                     }
                     let path = '/databases/{databaseId}/collections'.replace('{databaseId}', databaseId);
                     let payload = {};
@@ -1592,15 +1592,15 @@
                  *
                  * @param {string} databaseId
                  * @param {string} collectionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getCollection: (databaseId, collectionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1621,21 +1621,21 @@
                  * @param {string[]} read
                  * @param {string[]} write
                  * @param {boolean} enabled
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateCollection: (databaseId, collectionId, name, permission, read, write, enabled) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof permission === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "permission"');
+                        throw new KseException('Missing required parameter: "permission"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1667,15 +1667,15 @@
                  *
                  * @param {string} databaseId
                  * @param {string} collectionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteCollection: (databaseId, collectionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1690,15 +1690,15 @@
                  *
                  * @param {string} databaseId
                  * @param {string} collectionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listAttributes: (databaseId, collectionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1719,21 +1719,21 @@
                  * @param {boolean} required
                  * @param {boolean} xdefault
                  * @param {boolean} array
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createBooleanAttribute: (databaseId, collectionId, key, required, xdefault, array) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof required === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "required"');
+                        throw new KseException('Missing required parameter: "required"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/boolean'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1766,21 +1766,21 @@
                  * @param {boolean} required
                  * @param {string} xdefault
                  * @param {boolean} array
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createEmailAttribute: (databaseId, collectionId, key, required, xdefault, array) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof required === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "required"');
+                        throw new KseException('Missing required parameter: "required"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/email'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1812,24 +1812,24 @@
                  * @param {boolean} required
                  * @param {string} xdefault
                  * @param {boolean} array
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createEnumAttribute: (databaseId, collectionId, key, elements, required, xdefault, array) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof elements === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "elements"');
+                        throw new KseException('Missing required parameter: "elements"');
                     }
                     if (typeof required === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "required"');
+                        throw new KseException('Missing required parameter: "required"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/enum'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1868,21 +1868,21 @@
                  * @param {number} max
                  * @param {number} xdefault
                  * @param {boolean} array
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createFloatAttribute: (databaseId, collectionId, key, required, min, max, xdefault, array) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof required === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "required"');
+                        throw new KseException('Missing required parameter: "required"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/float'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1924,21 +1924,21 @@
                  * @param {number} max
                  * @param {number} xdefault
                  * @param {boolean} array
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createIntegerAttribute: (databaseId, collectionId, key, required, min, max, xdefault, array) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof required === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "required"');
+                        throw new KseException('Missing required parameter: "required"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/integer'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -1977,21 +1977,21 @@
                  * @param {boolean} required
                  * @param {string} xdefault
                  * @param {boolean} array
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createIpAttribute: (databaseId, collectionId, key, required, xdefault, array) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof required === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "required"');
+                        throw new KseException('Missing required parameter: "required"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/ip'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2025,24 +2025,24 @@
                  * @param {boolean} required
                  * @param {string} xdefault
                  * @param {boolean} array
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createStringAttribute: (databaseId, collectionId, key, size, required, xdefault, array) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof size === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "size"');
+                        throw new KseException('Missing required parameter: "size"');
                     }
                     if (typeof required === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "required"');
+                        throw new KseException('Missing required parameter: "required"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/string'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2078,21 +2078,21 @@
                  * @param {boolean} required
                  * @param {string} xdefault
                  * @param {boolean} array
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createUrlAttribute: (databaseId, collectionId, key, required, xdefault, array) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof required === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "required"');
+                        throw new KseException('Missing required parameter: "required"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/url'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2120,18 +2120,18 @@
                  * @param {string} databaseId
                  * @param {string} collectionId
                  * @param {string} key
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getAttribute: (databaseId, collectionId, key) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/{key}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{key}', key);
                     let payload = {};
@@ -2147,18 +2147,18 @@
                  * @param {string} databaseId
                  * @param {string} collectionId
                  * @param {string} key
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteAttribute: (databaseId, collectionId, key) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/attributes/{key}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{key}', key);
                     let payload = {};
@@ -2184,15 +2184,15 @@
                  * @param {string} cursorDirection
                  * @param {string[]} orderAttributes
                  * @param {string[]} orderTypes
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listDocuments: (databaseId, collectionId, queries, limit, offset, cursor, cursorDirection, orderAttributes, orderTypes) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2236,21 +2236,21 @@
                  * @param {object} data
                  * @param {string[]} read
                  * @param {string[]} write
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createDocument: (databaseId, collectionId, documentId, data, read, write) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof documentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "documentId"');
+                        throw new KseException('Missing required parameter: "documentId"');
                     }
                     if (typeof data === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "data"');
+                        throw new KseException('Missing required parameter: "data"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2280,18 +2280,18 @@
                  * @param {string} databaseId
                  * @param {string} collectionId
                  * @param {string} documentId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getDocument: (databaseId, collectionId, documentId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof documentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "documentId"');
+                        throw new KseException('Missing required parameter: "documentId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
                     let payload = {};
@@ -2312,21 +2312,21 @@
                  * @param {object} data
                  * @param {string[]} read
                  * @param {string[]} write
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateDocument: (databaseId, collectionId, documentId, data, read, write) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof documentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "documentId"');
+                        throw new KseException('Missing required parameter: "documentId"');
                     }
                     if (typeof data === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "data"');
+                        throw new KseException('Missing required parameter: "data"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
                     let payload = {};
@@ -2352,18 +2352,18 @@
                  * @param {string} databaseId
                  * @param {string} collectionId
                  * @param {string} documentId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteDocument: (databaseId, collectionId, documentId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof documentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "documentId"');
+                        throw new KseException('Missing required parameter: "documentId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
                     let payload = {};
@@ -2382,18 +2382,18 @@
                  * @param {string} documentId
                  * @param {number} limit
                  * @param {number} offset
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listDocumentLogs: (databaseId, collectionId, documentId, limit, offset) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof documentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "documentId"');
+                        throw new KseException('Missing required parameter: "documentId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/documents/{documentId}/logs'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{documentId}', documentId);
                     let payload = {};
@@ -2414,15 +2414,15 @@
                  *
                  * @param {string} databaseId
                  * @param {string} collectionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listIndexes: (databaseId, collectionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/indexes'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2441,24 +2441,24 @@
                  * @param {string} type
                  * @param {string[]} attributes
                  * @param {string[]} orders
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createIndex: (databaseId, collectionId, key, type, attributes, orders) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     if (typeof type === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "type"');
+                        throw new KseException('Missing required parameter: "type"');
                     }
                     if (typeof attributes === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "attributes"');
+                        throw new KseException('Missing required parameter: "attributes"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/indexes'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2486,18 +2486,18 @@
                  * @param {string} databaseId
                  * @param {string} collectionId
                  * @param {string} key
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getIndex: (databaseId, collectionId, key) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/indexes/{key}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{key}', key);
                     let payload = {};
@@ -2513,18 +2513,18 @@
                  * @param {string} databaseId
                  * @param {string} collectionId
                  * @param {string} key
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteIndex: (databaseId, collectionId, key) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     if (typeof key === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "key"');
+                        throw new KseException('Missing required parameter: "key"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/indexes/{key}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{key}', key);
                     let payload = {};
@@ -2542,15 +2542,15 @@
                  * @param {string} collectionId
                  * @param {number} limit
                  * @param {number} offset
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listCollectionLogs: (databaseId, collectionId, limit, offset) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/logs'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2572,15 +2572,15 @@
                  * @param {string} databaseId
                  * @param {string} collectionId
                  * @param {string} range
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getCollectionUsage: (databaseId, collectionId, range) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     if (typeof collectionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "collectionId"');
+                        throw new KseException('Missing required parameter: "collectionId"');
                     }
                     let path = '/databases/{databaseId}/collections/{collectionId}/usage'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
                     let payload = {};
@@ -2600,12 +2600,12 @@
                  * @param {string} databaseId
                  * @param {number} limit
                  * @param {number} offset
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listLogs: (databaseId, limit, offset) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     let path = '/databases/{databaseId}/logs'.replace('{databaseId}', databaseId);
                     let payload = {};
@@ -2626,12 +2626,12 @@
                  *
                  * @param {string} databaseId
                  * @param {string} range
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getDatabaseUsage: (databaseId, range) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof databaseId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "databaseId"');
+                        throw new KseException('Missing required parameter: "databaseId"');
                     }
                     let path = '/databases/{databaseId}/usage'.replace('{databaseId}', databaseId);
                     let payload = {};
@@ -2657,7 +2657,7 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 list: (search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
@@ -2701,21 +2701,21 @@
                  * @param {string[]} events
                  * @param {string} schedule
                  * @param {number} timeout
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 create: (functionId, name, execute, runtime, vars, events, schedule, timeout) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof execute === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "execute"');
+                        throw new KseException('Missing required parameter: "execute"');
                     }
                     if (typeof runtime === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "runtime"');
+                        throw new KseException('Missing required parameter: "runtime"');
                     }
                     let path = '/functions';
                     let payload = {};
@@ -2753,7 +2753,7 @@
                  *
                  * Get a list of all runtimes that are currently active on your instance.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listRuntimes: () => __awaiter(this, void 0, void 0, function* () {
@@ -2770,12 +2770,12 @@
                  * Get a function by its unique ID.
                  *
                  * @param {string} functionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 get: (functionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     let path = '/functions/{functionId}'.replace('{functionId}', functionId);
                     let payload = {};
@@ -2796,18 +2796,18 @@
                  * @param {string[]} events
                  * @param {string} schedule
                  * @param {number} timeout
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 update: (functionId, name, execute, vars, events, schedule, timeout) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof execute === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "execute"');
+                        throw new KseException('Missing required parameter: "execute"');
                     }
                     let path = '/functions/{functionId}'.replace('{functionId}', functionId);
                     let payload = {};
@@ -2840,12 +2840,12 @@
                  * Delete a function by its unique ID.
                  *
                  * @param {string} functionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 delete: (functionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     let path = '/functions/{functionId}'.replace('{functionId}', functionId);
                     let payload = {};
@@ -2867,12 +2867,12 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listDeployments: (functionId, search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     let path = '/functions/{functionId}/deployments'.replace('{functionId}', functionId);
                     let payload = {};
@@ -2917,21 +2917,21 @@
                  * @param {string} entrypoint
                  * @param {File} code
                  * @param {boolean} activate
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createDeployment: (functionId, entrypoint, code, activate, onProgress = (progress) => { }) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     if (typeof entrypoint === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "entrypoint"');
+                        throw new KseException('Missing required parameter: "entrypoint"');
                     }
                     if (typeof code === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "code"');
+                        throw new KseException('Missing required parameter: "code"');
                     }
                     if (typeof activate === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "activate"');
+                        throw new KseException('Missing required parameter: "activate"');
                     }
                     let path = '/functions/{functionId}/deployments'.replace('{functionId}', functionId);
                     let payload = {};
@@ -2946,7 +2946,7 @@
                     }
                     const uri = new URL(this.config.endpoint + path);
                     if (!(code instanceof File)) {
-                        throw new AppwriteException('Parameter "code" has to be a File.');
+                        throw new KseException('Parameter "code" has to be a File.');
                     }
                     const size = code.size;
                     if (size <= Appwrite.CHUNK_SIZE) {
@@ -2993,15 +2993,15 @@
                  *
                  * @param {string} functionId
                  * @param {string} deploymentId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getDeployment: (functionId, deploymentId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     if (typeof deploymentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "deploymentId"');
+                        throw new KseException('Missing required parameter: "deploymentId"');
                     }
                     let path = '/functions/{functionId}/deployments/{deploymentId}'.replace('{functionId}', functionId).replace('{deploymentId}', deploymentId);
                     let payload = {};
@@ -3019,15 +3019,15 @@
                  *
                  * @param {string} functionId
                  * @param {string} deploymentId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateDeployment: (functionId, deploymentId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     if (typeof deploymentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "deploymentId"');
+                        throw new KseException('Missing required parameter: "deploymentId"');
                     }
                     let path = '/functions/{functionId}/deployments/{deploymentId}'.replace('{functionId}', functionId).replace('{deploymentId}', deploymentId);
                     let payload = {};
@@ -3043,15 +3043,15 @@
                  *
                  * @param {string} functionId
                  * @param {string} deploymentId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteDeployment: (functionId, deploymentId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     if (typeof deploymentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "deploymentId"');
+                        throw new KseException('Missing required parameter: "deploymentId"');
                     }
                     let path = '/functions/{functionId}/deployments/{deploymentId}'.replace('{functionId}', functionId).replace('{deploymentId}', deploymentId);
                     let payload = {};
@@ -3067,18 +3067,18 @@
                  * @param {string} functionId
                  * @param {string} deploymentId
                  * @param {string} buildId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 retryBuild: (functionId, deploymentId, buildId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     if (typeof deploymentId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "deploymentId"');
+                        throw new KseException('Missing required parameter: "deploymentId"');
                     }
                     if (typeof buildId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "buildId"');
+                        throw new KseException('Missing required parameter: "buildId"');
                     }
                     let path = '/functions/{functionId}/deployments/{deploymentId}/builds/{buildId}'.replace('{functionId}', functionId).replace('{deploymentId}', deploymentId).replace('{buildId}', buildId);
                     let payload = {};
@@ -3101,12 +3101,12 @@
                  * @param {string} search
                  * @param {string} cursor
                  * @param {string} cursorDirection
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listExecutions: (functionId, limit, offset, search, cursor, cursorDirection) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     let path = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
                     let payload = {};
@@ -3141,12 +3141,12 @@
                  * @param {string} functionId
                  * @param {string} data
                  * @param {boolean} async
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createExecution: (functionId, data, async) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     let path = '/functions/{functionId}/executions'.replace('{functionId}', functionId);
                     let payload = {};
@@ -3168,15 +3168,15 @@
                  *
                  * @param {string} functionId
                  * @param {string} executionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getExecution: (functionId, executionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     if (typeof executionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "executionId"');
+                        throw new KseException('Missing required parameter: "executionId"');
                     }
                     let path = '/functions/{functionId}/executions/{executionId}'.replace('{functionId}', functionId).replace('{executionId}', executionId);
                     let payload = {};
@@ -3191,12 +3191,12 @@
                  *
                  * @param {string} functionId
                  * @param {string} range
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getUsage: (functionId, range) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof functionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "functionId"');
+                        throw new KseException('Missing required parameter: "functionId"');
                     }
                     let path = '/functions/{functionId}/usage'.replace('{functionId}', functionId);
                     let payload = {};
@@ -3215,7 +3215,7 @@
                  *
                  * Check the Appwrite HTTP server is up and responsive.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 get: () => __awaiter(this, void 0, void 0, function* () {
@@ -3231,7 +3231,7 @@
                  *
                  * Check the Appwrite Antivirus server is up and connection is successful.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getAntivirus: () => __awaiter(this, void 0, void 0, function* () {
@@ -3248,7 +3248,7 @@
                  * Check the Appwrite in-memory cache server is up and connection is
                  * successful.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getCache: () => __awaiter(this, void 0, void 0, function* () {
@@ -3264,7 +3264,7 @@
                  *
                  * Check the Appwrite database server is up and connection is successful.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getDB: () => __awaiter(this, void 0, void 0, function* () {
@@ -3282,7 +3282,7 @@
                  * [Letsencrypt](https://letsencrypt.org/) in the Appwrite internal queue
                  * server.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getQueueCertificates: () => __awaiter(this, void 0, void 0, function* () {
@@ -3297,7 +3297,7 @@
                  * Get Functions Queue
                  *
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getQueueFunctions: () => __awaiter(this, void 0, void 0, function* () {
@@ -3314,7 +3314,7 @@
                  * Get the number of logs that are waiting to be processed in the Appwrite
                  * internal queue server.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getQueueLogs: () => __awaiter(this, void 0, void 0, function* () {
@@ -3331,7 +3331,7 @@
                  * Get the number of webhooks that are waiting to be processed in the Appwrite
                  * internal queue server.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getQueueWebhooks: () => __awaiter(this, void 0, void 0, function* () {
@@ -3347,7 +3347,7 @@
                  *
                  * Check the Appwrite local storage device is up and connection is successful.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getStorageLocal: () => __awaiter(this, void 0, void 0, function* () {
@@ -3369,7 +3369,7 @@
                  * clocks over the Internet. If your computer sets its own clock, it likely
                  * uses NTP.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getTime: () => __awaiter(this, void 0, void 0, function* () {
@@ -3392,7 +3392,7 @@
                  *
                  * ([IP Geolocation by DB-IP](https://db-ip.com))
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 get: () => __awaiter(this, void 0, void 0, function* () {
@@ -3409,7 +3409,7 @@
                  * List of all continents. You can use the locale header to get the data in a
                  * supported language.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getContinents: () => __awaiter(this, void 0, void 0, function* () {
@@ -3426,7 +3426,7 @@
                  * List of all countries. You can use the locale header to get the data in a
                  * supported language.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getCountries: () => __awaiter(this, void 0, void 0, function* () {
@@ -3443,7 +3443,7 @@
                  * List of all countries that are currently members of the EU. You can use the
                  * locale header to get the data in a supported language.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getCountriesEU: () => __awaiter(this, void 0, void 0, function* () {
@@ -3460,7 +3460,7 @@
                  * List of all countries phone codes. You can use the locale header to get the
                  * data in a supported language.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getCountriesPhones: () => __awaiter(this, void 0, void 0, function* () {
@@ -3478,7 +3478,7 @@
                  * decimal digits for all major and minor currencies. You can use the locale
                  * header to get the data in a supported language.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getCurrencies: () => __awaiter(this, void 0, void 0, function* () {
@@ -3495,7 +3495,7 @@
                  * List of all languages classified by ISO 639-1 including 2-letter code, name
                  * in English, and name in the respective language.
                  *
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getLanguages: () => __awaiter(this, void 0, void 0, function* () {
@@ -3518,7 +3518,7 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 list: (search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
@@ -3563,18 +3563,18 @@
                  * @param {string} legalCity
                  * @param {string} legalAddress
                  * @param {string} legalTaxId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 create: (projectId, name, teamId, description, logo, url, legalName, legalCountry, legalState, legalCity, legalAddress, legalTaxId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     let path = '/projects';
                     let payload = {};
@@ -3624,12 +3624,12 @@
                  *
                  *
                  * @param {string} projectId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 get: (projectId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     let path = '/projects/{projectId}'.replace('{projectId}', projectId);
                     let payload = {};
@@ -3653,15 +3653,15 @@
                  * @param {string} legalCity
                  * @param {string} legalAddress
                  * @param {string} legalTaxId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 update: (projectId, name, description, logo, url, legalName, legalCountry, legalState, legalCity, legalAddress, legalTaxId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/projects/{projectId}'.replace('{projectId}', projectId);
                     let payload = {};
@@ -3706,15 +3706,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} password
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 delete: (projectId, password) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     let path = '/projects/{projectId}'.replace('{projectId}', projectId);
                     let payload = {};
@@ -3732,15 +3732,15 @@
                  *
                  * @param {string} projectId
                  * @param {number} limit
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateAuthLimit: (projectId, limit) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof limit === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "limit"');
+                        throw new KseException('Missing required parameter: "limit"');
                     }
                     let path = '/projects/{projectId}/auth/limit'.replace('{projectId}', projectId);
                     let payload = {};
@@ -3759,18 +3759,18 @@
                  * @param {string} projectId
                  * @param {string} method
                  * @param {boolean} status
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateAuthStatus: (projectId, method, status) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof method === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "method"');
+                        throw new KseException('Missing required parameter: "method"');
                     }
                     if (typeof status === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "status"');
+                        throw new KseException('Missing required parameter: "status"');
                     }
                     let path = '/projects/{projectId}/auth/{method}'.replace('{projectId}', projectId).replace('{method}', method);
                     let payload = {};
@@ -3787,12 +3787,12 @@
                  *
                  *
                  * @param {string} projectId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listDomains: (projectId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     let path = '/projects/{projectId}/domains'.replace('{projectId}', projectId);
                     let payload = {};
@@ -3807,15 +3807,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} domain
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createDomain: (projectId, domain) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof domain === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "domain"');
+                        throw new KseException('Missing required parameter: "domain"');
                     }
                     let path = '/projects/{projectId}/domains'.replace('{projectId}', projectId);
                     let payload = {};
@@ -3833,15 +3833,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} domainId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getDomain: (projectId, domainId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof domainId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "domainId"');
+                        throw new KseException('Missing required parameter: "domainId"');
                     }
                     let path = '/projects/{projectId}/domains/{domainId}'.replace('{projectId}', projectId).replace('{domainId}', domainId);
                     let payload = {};
@@ -3856,15 +3856,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} domainId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteDomain: (projectId, domainId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof domainId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "domainId"');
+                        throw new KseException('Missing required parameter: "domainId"');
                     }
                     let path = '/projects/{projectId}/domains/{domainId}'.replace('{projectId}', projectId).replace('{domainId}', domainId);
                     let payload = {};
@@ -3879,15 +3879,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} domainId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateDomainVerification: (projectId, domainId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof domainId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "domainId"');
+                        throw new KseException('Missing required parameter: "domainId"');
                     }
                     let path = '/projects/{projectId}/domains/{domainId}/verification'.replace('{projectId}', projectId).replace('{domainId}', domainId);
                     let payload = {};
@@ -3901,12 +3901,12 @@
                  *
                  *
                  * @param {string} projectId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listKeys: (projectId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     let path = '/projects/{projectId}/keys'.replace('{projectId}', projectId);
                     let payload = {};
@@ -3923,18 +3923,18 @@
                  * @param {string} name
                  * @param {string[]} scopes
                  * @param {number} expire
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createKey: (projectId, name, scopes, expire) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof scopes === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "scopes"');
+                        throw new KseException('Missing required parameter: "scopes"');
                     }
                     let path = '/projects/{projectId}/keys'.replace('{projectId}', projectId);
                     let payload = {};
@@ -3958,15 +3958,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} keyId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getKey: (projectId, keyId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof keyId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "keyId"');
+                        throw new KseException('Missing required parameter: "keyId"');
                     }
                     let path = '/projects/{projectId}/keys/{keyId}'.replace('{projectId}', projectId).replace('{keyId}', keyId);
                     let payload = {};
@@ -3984,21 +3984,21 @@
                  * @param {string} name
                  * @param {string[]} scopes
                  * @param {number} expire
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateKey: (projectId, keyId, name, scopes, expire) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof keyId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "keyId"');
+                        throw new KseException('Missing required parameter: "keyId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof scopes === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "scopes"');
+                        throw new KseException('Missing required parameter: "scopes"');
                     }
                     let path = '/projects/{projectId}/keys/{keyId}'.replace('{projectId}', projectId).replace('{keyId}', keyId);
                     let payload = {};
@@ -4022,15 +4022,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} keyId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteKey: (projectId, keyId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof keyId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "keyId"');
+                        throw new KseException('Missing required parameter: "keyId"');
                     }
                     let path = '/projects/{projectId}/keys/{keyId}'.replace('{projectId}', projectId).replace('{keyId}', keyId);
                     let payload = {};
@@ -4047,15 +4047,15 @@
                  * @param {string} provider
                  * @param {string} appId
                  * @param {string} secret
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateOAuth2: (projectId, provider, appId, secret) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof provider === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "provider"');
+                        throw new KseException('Missing required parameter: "provider"');
                     }
                     let path = '/projects/{projectId}/oauth2'.replace('{projectId}', projectId);
                     let payload = {};
@@ -4078,12 +4078,12 @@
                  *
                  *
                  * @param {string} projectId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listPlatforms: (projectId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     let path = '/projects/{projectId}/platforms'.replace('{projectId}', projectId);
                     let payload = {};
@@ -4102,18 +4102,18 @@
                  * @param {string} key
                  * @param {string} store
                  * @param {string} hostname
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createPlatform: (projectId, type, name, key, store, hostname) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof type === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "type"');
+                        throw new KseException('Missing required parameter: "type"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/projects/{projectId}/platforms'.replace('{projectId}', projectId);
                     let payload = {};
@@ -4143,15 +4143,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} platformId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getPlatform: (projectId, platformId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof platformId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "platformId"');
+                        throw new KseException('Missing required parameter: "platformId"');
                     }
                     let path = '/projects/{projectId}/platforms/{platformId}'.replace('{projectId}', projectId).replace('{platformId}', platformId);
                     let payload = {};
@@ -4170,18 +4170,18 @@
                  * @param {string} key
                  * @param {string} store
                  * @param {string} hostname
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePlatform: (projectId, platformId, name, key, store, hostname) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof platformId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "platformId"');
+                        throw new KseException('Missing required parameter: "platformId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/projects/{projectId}/platforms/{platformId}'.replace('{projectId}', projectId).replace('{platformId}', platformId);
                     let payload = {};
@@ -4208,15 +4208,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} platformId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deletePlatform: (projectId, platformId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof platformId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "platformId"');
+                        throw new KseException('Missing required parameter: "platformId"');
                     }
                     let path = '/projects/{projectId}/platforms/{platformId}'.replace('{projectId}', projectId).replace('{platformId}', platformId);
                     let payload = {};
@@ -4232,18 +4232,18 @@
                  * @param {string} projectId
                  * @param {string} service
                  * @param {boolean} status
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateServiceStatus: (projectId, service, status) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof service === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "service"');
+                        throw new KseException('Missing required parameter: "service"');
                     }
                     if (typeof status === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "status"');
+                        throw new KseException('Missing required parameter: "status"');
                     }
                     let path = '/projects/{projectId}/service'.replace('{projectId}', projectId);
                     let payload = {};
@@ -4264,12 +4264,12 @@
                  *
                  * @param {string} projectId
                  * @param {string} range
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getUsage: (projectId, range) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     let path = '/projects/{projectId}/usage'.replace('{projectId}', projectId);
                     let payload = {};
@@ -4286,12 +4286,12 @@
                  *
                  *
                  * @param {string} projectId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listWebhooks: (projectId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     let path = '/projects/{projectId}/webhooks'.replace('{projectId}', projectId);
                     let payload = {};
@@ -4311,24 +4311,24 @@
                  * @param {boolean} security
                  * @param {string} httpUser
                  * @param {string} httpPass
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createWebhook: (projectId, name, events, url, security, httpUser, httpPass) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof events === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "events"');
+                        throw new KseException('Missing required parameter: "events"');
                     }
                     if (typeof url === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "url"');
+                        throw new KseException('Missing required parameter: "url"');
                     }
                     if (typeof security === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "security"');
+                        throw new KseException('Missing required parameter: "security"');
                     }
                     let path = '/projects/{projectId}/webhooks'.replace('{projectId}', projectId);
                     let payload = {};
@@ -4361,15 +4361,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} webhookId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getWebhook: (projectId, webhookId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof webhookId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "webhookId"');
+                        throw new KseException('Missing required parameter: "webhookId"');
                     }
                     let path = '/projects/{projectId}/webhooks/{webhookId}'.replace('{projectId}', projectId).replace('{webhookId}', webhookId);
                     let payload = {};
@@ -4390,27 +4390,27 @@
                  * @param {boolean} security
                  * @param {string} httpUser
                  * @param {string} httpPass
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateWebhook: (projectId, webhookId, name, events, url, security, httpUser, httpPass) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof webhookId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "webhookId"');
+                        throw new KseException('Missing required parameter: "webhookId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof events === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "events"');
+                        throw new KseException('Missing required parameter: "events"');
                     }
                     if (typeof url === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "url"');
+                        throw new KseException('Missing required parameter: "url"');
                     }
                     if (typeof security === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "security"');
+                        throw new KseException('Missing required parameter: "security"');
                     }
                     let path = '/projects/{projectId}/webhooks/{webhookId}'.replace('{projectId}', projectId).replace('{webhookId}', webhookId);
                     let payload = {};
@@ -4443,15 +4443,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} webhookId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteWebhook: (projectId, webhookId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof webhookId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "webhookId"');
+                        throw new KseException('Missing required parameter: "webhookId"');
                     }
                     let path = '/projects/{projectId}/webhooks/{webhookId}'.replace('{projectId}', projectId).replace('{webhookId}', webhookId);
                     let payload = {};
@@ -4466,15 +4466,15 @@
                  *
                  * @param {string} projectId
                  * @param {string} webhookId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateWebhookSignature: (projectId, webhookId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof projectId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "projectId"');
+                        throw new KseException('Missing required parameter: "projectId"');
                     }
                     if (typeof webhookId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "webhookId"');
+                        throw new KseException('Missing required parameter: "webhookId"');
                     }
                     let path = '/projects/{projectId}/webhooks/{webhookId}/signature'.replace('{projectId}', projectId).replace('{webhookId}', webhookId);
                     let payload = {};
@@ -4497,7 +4497,7 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listBuckets: (search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
@@ -4541,18 +4541,18 @@
                  * @param {string[]} allowedFileExtensions
                  * @param {boolean} encryption
                  * @param {boolean} antivirus
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createBucket: (bucketId, name, permission, read, write, enabled, maximumFileSize, allowedFileExtensions, encryption, antivirus) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof permission === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "permission"');
+                        throw new KseException('Missing required parameter: "permission"');
                     }
                     let path = '/storage/buckets';
                     let payload = {};
@@ -4598,12 +4598,12 @@
                  * JSON object with the storage bucket metadata.
                  *
                  * @param {string} bucketId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getBucket: (bucketId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     let path = '/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
                     let payload = {};
@@ -4627,18 +4627,18 @@
                  * @param {string[]} allowedFileExtensions
                  * @param {boolean} encryption
                  * @param {boolean} antivirus
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateBucket: (bucketId, name, permission, read, write, enabled, maximumFileSize, allowedFileExtensions, encryption, antivirus) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     if (typeof permission === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "permission"');
+                        throw new KseException('Missing required parameter: "permission"');
                     }
                     let path = '/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
                     let payload = {};
@@ -4680,12 +4680,12 @@
                  * Delete a storage bucket by its unique ID.
                  *
                  * @param {string} bucketId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteBucket: (bucketId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     let path = '/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
                     let payload = {};
@@ -4708,12 +4708,12 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listFiles: (bucketId, search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     let path = '/storage/buckets/{bucketId}/files'.replace('{bucketId}', bucketId);
                     let payload = {};
@@ -4767,18 +4767,18 @@
                  * @param {File} file
                  * @param {string[]} read
                  * @param {string[]} write
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createFile: (bucketId, fileId, file, read, write, onProgress = (progress) => { }) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof fileId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "fileId"');
+                        throw new KseException('Missing required parameter: "fileId"');
                     }
                     if (typeof file === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "file"');
+                        throw new KseException('Missing required parameter: "file"');
                     }
                     let path = '/storage/buckets/{bucketId}/files'.replace('{bucketId}', bucketId);
                     let payload = {};
@@ -4796,7 +4796,7 @@
                     }
                     const uri = new URL(this.config.endpoint + path);
                     if (!(file instanceof File)) {
-                        throw new AppwriteException('Parameter "file" has to be a File.');
+                        throw new KseException('Parameter "file" has to be a File.');
                     }
                     const size = file.size;
                     if (size <= Appwrite.CHUNK_SIZE) {
@@ -4852,15 +4852,15 @@
                  *
                  * @param {string} bucketId
                  * @param {string} fileId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getFile: (bucketId, fileId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof fileId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "fileId"');
+                        throw new KseException('Missing required parameter: "fileId"');
                     }
                     let path = '/storage/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
                     let payload = {};
@@ -4879,15 +4879,15 @@
                  * @param {string} fileId
                  * @param {string[]} read
                  * @param {string[]} write
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateFile: (bucketId, fileId, read, write) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof fileId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "fileId"');
+                        throw new KseException('Missing required parameter: "fileId"');
                     }
                     let path = '/storage/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
                     let payload = {};
@@ -4910,15 +4910,15 @@
                  *
                  * @param {string} bucketId
                  * @param {string} fileId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteFile: (bucketId, fileId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof fileId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "fileId"');
+                        throw new KseException('Missing required parameter: "fileId"');
                     }
                     let path = '/storage/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
                     let payload = {};
@@ -4936,15 +4936,15 @@
                  *
                  * @param {string} bucketId
                  * @param {string} fileId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getFileDownload: (bucketId, fileId) => {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof fileId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "fileId"');
+                        throw new KseException('Missing required parameter: "fileId"');
                     }
                     let path = '/storage/buckets/{bucketId}/files/{fileId}/download'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
                     let payload = {};
@@ -4977,15 +4977,15 @@
                  * @param {number} rotation
                  * @param {string} background
                  * @param {string} output
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getFilePreview: (bucketId, fileId, width, height, gravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output) => {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof fileId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "fileId"');
+                        throw new KseException('Missing required parameter: "fileId"');
                     }
                     let path = '/storage/buckets/{bucketId}/files/{fileId}/preview'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
                     let payload = {};
@@ -5038,15 +5038,15 @@
                  *
                  * @param {string} bucketId
                  * @param {string} fileId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {URL}
                  */
                 getFileView: (bucketId, fileId) => {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     if (typeof fileId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "fileId"');
+                        throw new KseException('Missing required parameter: "fileId"');
                     }
                     let path = '/storage/buckets/{bucketId}/files/{fileId}/view'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
                     let payload = {};
@@ -5062,7 +5062,7 @@
                  *
                  *
                  * @param {string} range
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getUsage: (range) => __awaiter(this, void 0, void 0, function* () {
@@ -5082,12 +5082,12 @@
                  *
                  * @param {string} bucketId
                  * @param {string} range
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getBucketUsage: (bucketId, range) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof bucketId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "bucketId"');
+                        throw new KseException('Missing required parameter: "bucketId"');
                     }
                     let path = '/storage/{bucketId}/usage'.replace('{bucketId}', bucketId);
                     let payload = {};
@@ -5116,7 +5116,7 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 list: (search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
@@ -5155,15 +5155,15 @@
                  * @param {string} teamId
                  * @param {string} name
                  * @param {string[]} roles
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 create: (teamId, name, roles) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/teams';
                     let payload = {};
@@ -5187,12 +5187,12 @@
                  * Get a team by its ID. All team members have read access for this resource.
                  *
                  * @param {string} teamId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 get: (teamId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     let path = '/teams/{teamId}'.replace('{teamId}', teamId);
                     let payload = {};
@@ -5209,15 +5209,15 @@
                  *
                  * @param {string} teamId
                  * @param {string} name
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 update: (teamId, name) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/teams/{teamId}'.replace('{teamId}', teamId);
                     let payload = {};
@@ -5236,12 +5236,12 @@
                  * delete the team.
                  *
                  * @param {string} teamId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 delete: (teamId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     let path = '/teams/{teamId}'.replace('{teamId}', teamId);
                     let payload = {};
@@ -5258,12 +5258,12 @@
                  * @param {string} teamId
                  * @param {number} limit
                  * @param {number} offset
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 listLogs: (teamId, limit, offset) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     let path = '/teams/{teamId}/logs'.replace('{teamId}', teamId);
                     let payload = {};
@@ -5291,12 +5291,12 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getMemberships: (teamId, search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     let path = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);
                     let payload = {};
@@ -5347,21 +5347,21 @@
                  * @param {string[]} roles
                  * @param {string} url
                  * @param {string} name
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 createMembership: (teamId, email, roles, url, name) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     if (typeof email === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "email"');
+                        throw new KseException('Missing required parameter: "email"');
                     }
                     if (typeof roles === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "roles"');
+                        throw new KseException('Missing required parameter: "roles"');
                     }
                     if (typeof url === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "url"');
+                        throw new KseException('Missing required parameter: "url"');
                     }
                     let path = '/teams/{teamId}/memberships'.replace('{teamId}', teamId);
                     let payload = {};
@@ -5390,15 +5390,15 @@
                  *
                  * @param {string} teamId
                  * @param {string} membershipId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getMembership: (teamId, membershipId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     if (typeof membershipId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "membershipId"');
+                        throw new KseException('Missing required parameter: "membershipId"');
                     }
                     let path = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
                     let payload = {};
@@ -5417,18 +5417,18 @@
                  * @param {string} teamId
                  * @param {string} membershipId
                  * @param {string[]} roles
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateMembershipRoles: (teamId, membershipId, roles) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     if (typeof membershipId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "membershipId"');
+                        throw new KseException('Missing required parameter: "membershipId"');
                     }
                     if (typeof roles === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "roles"');
+                        throw new KseException('Missing required parameter: "roles"');
                     }
                     let path = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
                     let payload = {};
@@ -5449,15 +5449,15 @@
                  *
                  * @param {string} teamId
                  * @param {string} membershipId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteMembership: (teamId, membershipId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     if (typeof membershipId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "membershipId"');
+                        throw new KseException('Missing required parameter: "membershipId"');
                     }
                     let path = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
                     let payload = {};
@@ -5481,21 +5481,21 @@
                  * @param {string} membershipId
                  * @param {string} userId
                  * @param {string} secret
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateMembershipStatus: (teamId, membershipId, userId, secret) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof teamId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "teamId"');
+                        throw new KseException('Missing required parameter: "teamId"');
                     }
                     if (typeof membershipId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "membershipId"');
+                        throw new KseException('Missing required parameter: "membershipId"');
                     }
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof secret === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "secret"');
+                        throw new KseException('Missing required parameter: "secret"');
                     }
                     let path = '/teams/{teamId}/memberships/{membershipId}/status'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
                     let payload = {};
@@ -5524,7 +5524,7 @@
                  * @param {string} cursor
                  * @param {string} cursorDirection
                  * @param {string} orderType
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 list: (search, limit, offset, cursor, cursorDirection, orderType) => __awaiter(this, void 0, void 0, function* () {
@@ -5562,18 +5562,18 @@
                  * @param {string} email
                  * @param {string} password
                  * @param {string} name
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 create: (userId, email, password, name) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof email === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "email"');
+                        throw new KseException('Missing required parameter: "email"');
                     }
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     let path = '/users';
                     let payload = {};
@@ -5600,7 +5600,7 @@
                  *
                  * @param {string} range
                  * @param {string} provider
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getUsage: (range, provider) => __awaiter(this, void 0, void 0, function* () {
@@ -5623,12 +5623,12 @@
                  * Get a user by its unique ID.
                  *
                  * @param {string} userId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 get: (userId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     let path = '/users/{userId}'.replace('{userId}', userId);
                     let payload = {};
@@ -5647,12 +5647,12 @@
                  * endpoint instead.
                  *
                  * @param {string} userId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 delete: (userId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     let path = '/users/{userId}'.replace('{userId}', userId);
                     let payload = {};
@@ -5668,15 +5668,15 @@
                  *
                  * @param {string} userId
                  * @param {string} email
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateEmail: (userId, email) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof email === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "email"');
+                        throw new KseException('Missing required parameter: "email"');
                     }
                     let path = '/users/{userId}/email'.replace('{userId}', userId);
                     let payload = {};
@@ -5696,12 +5696,12 @@
                  * @param {string} userId
                  * @param {number} limit
                  * @param {number} offset
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getLogs: (userId, limit, offset) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     let path = '/users/{userId}/logs'.replace('{userId}', userId);
                     let payload = {};
@@ -5722,12 +5722,12 @@
                  * Get the user membership list by its unique ID.
                  *
                  * @param {string} userId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getMemberships: (userId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     let path = '/users/{userId}/memberships'.replace('{userId}', userId);
                     let payload = {};
@@ -5743,15 +5743,15 @@
                  *
                  * @param {string} userId
                  * @param {string} name
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateName: (userId, name) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof name === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "name"');
+                        throw new KseException('Missing required parameter: "name"');
                     }
                     let path = '/users/{userId}/name'.replace('{userId}', userId);
                     let payload = {};
@@ -5770,15 +5770,15 @@
                  *
                  * @param {string} userId
                  * @param {string} password
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePassword: (userId, password) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof password === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "password"');
+                        throw new KseException('Missing required parameter: "password"');
                     }
                     let path = '/users/{userId}/password'.replace('{userId}', userId);
                     let payload = {};
@@ -5797,15 +5797,15 @@
                  *
                  * @param {string} userId
                  * @param {string} number
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePhone: (userId, number) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof number === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "number"');
+                        throw new KseException('Missing required parameter: "number"');
                     }
                     let path = '/users/{userId}/phone'.replace('{userId}', userId);
                     let payload = {};
@@ -5823,12 +5823,12 @@
                  * Get the user preferences by its unique ID.
                  *
                  * @param {string} userId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getPrefs: (userId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     let path = '/users/{userId}/prefs'.replace('{userId}', userId);
                     let payload = {};
@@ -5846,15 +5846,15 @@
                  *
                  * @param {string} userId
                  * @param {object} prefs
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePrefs: (userId, prefs) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof prefs === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "prefs"');
+                        throw new KseException('Missing required parameter: "prefs"');
                     }
                     let path = '/users/{userId}/prefs'.replace('{userId}', userId);
                     let payload = {};
@@ -5872,12 +5872,12 @@
                  * Get the user sessions list by its unique ID.
                  *
                  * @param {string} userId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 getSessions: (userId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     let path = '/users/{userId}/sessions'.replace('{userId}', userId);
                     let payload = {};
@@ -5892,12 +5892,12 @@
                  * Delete all user's sessions by using the user's unique ID.
                  *
                  * @param {string} userId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteSessions: (userId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     let path = '/users/{userId}/sessions'.replace('{userId}', userId);
                     let payload = {};
@@ -5913,15 +5913,15 @@
                  *
                  * @param {string} userId
                  * @param {string} sessionId
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 deleteSession: (userId, sessionId) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof sessionId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "sessionId"');
+                        throw new KseException('Missing required parameter: "sessionId"');
                     }
                     let path = '/users/{userId}/sessions/{sessionId}'.replace('{userId}', userId).replace('{sessionId}', sessionId);
                     let payload = {};
@@ -5938,15 +5938,15 @@
                  *
                  * @param {string} userId
                  * @param {boolean} status
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateStatus: (userId, status) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof status === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "status"');
+                        throw new KseException('Missing required parameter: "status"');
                     }
                     let path = '/users/{userId}/status'.replace('{userId}', userId);
                     let payload = {};
@@ -5965,15 +5965,15 @@
                  *
                  * @param {string} userId
                  * @param {boolean} emailVerification
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updateEmailVerification: (userId, emailVerification) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof emailVerification === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "emailVerification"');
+                        throw new KseException('Missing required parameter: "emailVerification"');
                     }
                     let path = '/users/{userId}/verification'.replace('{userId}', userId);
                     let payload = {};
@@ -5992,15 +5992,15 @@
                  *
                  * @param {string} userId
                  * @param {boolean} phoneVerification
-                 * @throws {AppwriteException}
+                 * @throws {KseException}
                  * @returns {Promise}
                  */
                 updatePhoneVerification: (userId, phoneVerification) => __awaiter(this, void 0, void 0, function* () {
                     if (typeof userId === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "userId"');
+                        throw new KseException('Missing required parameter: "userId"');
                     }
                     if (typeof phoneVerification === 'undefined') {
-                        throw new AppwriteException('Missing required parameter: "phoneVerification"');
+                        throw new KseException('Missing required parameter: "phoneVerification"');
                     }
                     let path = '/users/{userId}/verification/phone'.replace('{userId}', userId);
                     let payload = {};
@@ -6197,7 +6197,7 @@
                         };
                     }
                     if (400 <= response.status) {
-                        throw new AppwriteException(data === null || data === void 0 ? void 0 : data.message, response.status, data === null || data === void 0 ? void 0 : data.type, data);
+                        throw new KseException(data === null || data === void 0 ? void 0 : data.message, response.status, data === null || data === void 0 ? void 0 : data.type, data);
                     }
                     const cookieFallback = response.headers.get('X-Fallback-Cookies');
                     if (typeof window !== 'undefined' && window.localStorage && cookieFallback) {
@@ -6207,10 +6207,10 @@
                     return data;
                 }
                 catch (e) {
-                    if (e instanceof AppwriteException) {
+                    if (e instanceof KseException) {
                         throw e;
                     }
-                    throw new AppwriteException(e.message);
+                    throw new KseException(e.message);
                 }
             });
         }

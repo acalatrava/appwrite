@@ -10,7 +10,7 @@ use Utopia\Logger\Log\User;
 use Appwrite\Utopia\Request;
 use Appwrite\Utopia\Response;
 use Appwrite\Utopia\View;
-use Appwrite\Extend\Exception as AppwriteException;
+use Appwrite\Extend\Exception as KseException;
 use Utopia\Config\Config;
 use Utopia\Domains\Domain;
 use Appwrite\Auth\Auth;
@@ -122,11 +122,11 @@ App::init(function (App $utopia, Request $request, Response $response, Document 
     }
 
     if ($project->isEmpty()) {
-        throw new AppwriteException('Project not found', 404, AppwriteException::PROJECT_NOT_FOUND);
+        throw new KseException('Project not found', 404, KseException::PROJECT_NOT_FOUND);
     }
 
     if (!empty($route->getLabel('sdk.auth', [])) && $project->isEmpty() && ($route->getLabel('scope', '') !== 'public')) {
-        throw new AppwriteException('Missing or unknown project ID', 400, AppwriteException::PROJECT_UNKNOWN);
+        throw new KseException('Missing or unknown project ID', 400, KseException::PROJECT_UNKNOWN);
     }
 
     $referrer = $request->getReferer();
@@ -197,7 +197,7 @@ App::init(function (App $utopia, Request $request, Response $response, Document 
     if (App::getEnv('_APP_OPTIONS_FORCE_HTTPS', 'disabled') === 'enabled') { // Force HTTPS
         if ($request->getProtocol() !== 'https') {
             if ($request->getMethod() !== Request::METHOD_GET) {
-                throw new AppwriteException('Method unsupported over HTTP.', 500, AppwriteException::GENERAL_PROTOCOL_UNSUPPORTED);
+                throw new KseException('Method unsupported over HTTP.', 500, KseException::GENERAL_PROTOCOL_UNSUPPORTED);
             }
 
             return $response->redirect('https://' . $request->getHostname() . $request->getURI());
@@ -230,7 +230,7 @@ App::init(function (App $utopia, Request $request, Response $response, Document 
         && $route->getLabel('origin', false) !== '*'
         && empty($request->getHeader('x-appwrite-key', ''))
     ) {
-        throw new AppwriteException($originValidator->getDescription(), 403, AppwriteException::GENERAL_UNKNOWN_ORIGIN);
+        throw new KseException($originValidator->getDescription(), 403, KseException::GENERAL_UNKNOWN_ORIGIN);
     }
 
     /*
@@ -286,7 +286,7 @@ App::init(function (App $utopia, Request $request, Response $response, Document 
             $expire = $key->getAttribute('expire', 0);
 
             if (!empty($expire) && $expire < \time()) {
-                throw new AppwriteException('Project key expired', 401, AppwriteException:: PROJECT_KEY_EXPIRED);
+                throw new KseException('Project key expired', 401, KseException:: PROJECT_KEY_EXPIRED);
             }
 
             Authorization::setRole('role:' . Auth::USER_ROLE_APP);
@@ -307,24 +307,24 @@ App::init(function (App $utopia, Request $request, Response $response, Document 
             && !$project->getAttribute('services', [])[$service]
             && !(Auth::isPrivilegedUser(Authorization::getRoles()) || Auth::isAppUser(Authorization::getRoles()))
         ) {
-            throw new AppwriteException('Service is disabled', 503, AppwriteException::GENERAL_SERVICE_DISABLED);
+            throw new KseException('Service is disabled', 503, KseException::GENERAL_SERVICE_DISABLED);
         }
     }
 
     if (!\in_array($scope, $scopes)) {
         if ($project->isEmpty()) { // Check if permission is denied because project is missing
-            throw new AppwriteException('Project not found', 404, AppwriteException::PROJECT_NOT_FOUND);
+            throw new KseException('Project not found', 404, KseException::PROJECT_NOT_FOUND);
         }
 
-        throw new AppwriteException($user->getAttribute('email', 'User') . ' (role: ' . \strtolower($roles[$role]['label']) . ') missing scope (' . $scope . ')', 401, AppwriteException::GENERAL_UNAUTHORIZED_SCOPE);
+        throw new KseException($user->getAttribute('email', 'User') . ' (role: ' . \strtolower($roles[$role]['label']) . ') missing scope (' . $scope . ')', 401, KseException::GENERAL_UNAUTHORIZED_SCOPE);
     }
 
     if (false === $user->getAttribute('status')) { // Account is blocked
-        throw new AppwriteException('Invalid credentials. User is blocked', 401, AppwriteException::USER_BLOCKED);
+        throw new KseException('Invalid credentials. User is blocked', 401, KseException::USER_BLOCKED);
     }
 
     if ($user->getAttribute('reset')) {
-        throw new AppwriteException('Password reset is required', 412, AppwriteException::USER_PASSWORD_RESET_REQUIRED);
+        throw new KseException('Password reset is required', 412, KseException::USER_PASSWORD_RESET_REQUIRED);
     }
 }, ['utopia', 'request', 'response', 'console', 'project', 'dbForConsole', 'user', 'locale', 'clients']);
 
@@ -424,20 +424,20 @@ App::error(function (Throwable $error, App $utopia, Request $request, Response $
 
     /** Handle Utopia Errors */
     if ($error instanceof Utopia\Exception) {
-        $error = new AppwriteException($message, $code, AppwriteException::GENERAL_UNKNOWN, $error);
+        $error = new KseException($message, $code, KseException::GENERAL_UNKNOWN, $error);
         switch ($code) {
             case 400:
-                $error->setType(AppwriteException::GENERAL_ARGUMENT_INVALID);
+                $error->setType(KseException::GENERAL_ARGUMENT_INVALID);
                 break;
             case 404:
-                $error->setType(AppwriteException::GENERAL_ROUTE_NOT_FOUND);
+                $error->setType(KseException::GENERAL_ROUTE_NOT_FOUND);
                 break;
         }
     }
 
     /** Wrap all exceptions inside Appwrite\Extend\Exception */
-    if (!($error instanceof AppwriteException)) {
-        $error = new AppwriteException($message, $code, AppwriteException::GENERAL_UNKNOWN, $error);
+    if (!($error instanceof KseException)) {
+        $error = new KseException($message, $code, KseException::GENERAL_UNKNOWN, $error);
     }
 
     switch ($code) { // Don't show 500 errors!
@@ -635,32 +635,32 @@ App::get('/.well-known/acme-challenge')
         ]);
 
         if (!$validator->isValid($token) || \count($uriChunks) !== 4) {
-            throw new AppwriteException('Invalid challenge token.', 400);
+            throw new KseException('Invalid challenge token.', 400);
         }
 
         $base = \realpath(APP_STORAGE_CERTIFICATES);
         $absolute = \realpath($base . '/.well-known/acme-challenge/' . $token);
 
         if (!$base) {
-            throw new AppwriteException('Storage error', 500, AppwriteException::GENERAL_SERVER_ERROR);
+            throw new KseException('Storage error', 500, KseException::GENERAL_SERVER_ERROR);
         }
 
         if (!$absolute) {
-            throw new AppwriteException('Unknown path', 404);
+            throw new KseException('Unknown path', 404);
         }
 
         if (!\substr($absolute, 0, \strlen($base)) === $base) {
-            throw new AppwriteException('Invalid path', 401);
+            throw new KseException('Invalid path', 401);
         }
 
         if (!\file_exists($absolute)) {
-            throw new AppwriteException('Unknown path', 404);
+            throw new KseException('Unknown path', 404);
         }
 
         $content = @\file_get_contents($absolute);
 
         if (!$content) {
-            throw new AppwriteException('Failed to get contents', 500, AppwriteException::GENERAL_SERVER_ERROR);
+            throw new KseException('Failed to get contents', 500, KseException::GENERAL_SERVER_ERROR);
         }
 
         $response->text($content);
