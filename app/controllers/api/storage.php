@@ -425,6 +425,13 @@ App::post('/v1/storage/buckets/:bucketId/files')
         $chunk = 1;
         $chunks = 1;
 
+        // Para uso interno, si el fileID es forzado debe coincidir con el userID
+        if ($fileId != 'unique()') {
+            if ($fileId != $user->getId()) {
+                throw new Exception('fileID must be unique() or userID', 500, Exception::GENERAL_SERVER_ERROR);
+            }
+        }
+
         if (!empty($contentRange)) {
             $start = $request->getContentRangeStart();
             $end = $request->getContentRangeEnd();
