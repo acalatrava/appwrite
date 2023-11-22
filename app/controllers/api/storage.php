@@ -421,9 +421,6 @@ App::post('/v1/storage/buckets/:bucketId/files')
         $fileSize = (\is_array($file['size']) && isset($file['size'][0])) ? $file['size'][0] : $file['size'];
 
         $contentRange = $request->getHeader('content-range');
-        $fileId = $fileId === 'unique()' ? $dbForProject->getId() : $fileId;
-        $chunk = 1;
-        $chunks = 1;
 
         // Para uso interno, si el fileID es forzado debe coincidir con el userID
         if ($fileId !== 'unique()') {
@@ -431,6 +428,10 @@ App::post('/v1/storage/buckets/:bucketId/files')
                 throw new Exception('fileID must be unique() or userID', 500, Exception::GENERAL_SERVER_ERROR);
             }
         }
+        
+        $fileId = $fileId === 'unique()' ? $dbForProject->getId() : $fileId;
+        $chunk = 1;
+        $chunks = 1;
 
         if (!empty($contentRange)) {
             $start = $request->getContentRangeStart();
