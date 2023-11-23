@@ -697,6 +697,12 @@ App::get('/v1/storage/buckets/:bucketId/files')
     ->inject('mode')
     ->action(function (string $bucketId, string $search, int $limit, int $offset, string $cursor, string $cursorDirection, string $orderType, Response $response, Database $dbForProject, Stats $usage, string $mode) {
 
+        $roles = Authorization::getRoles();
+
+        if (!Auth::isPrivilegedUser($roles)) {
+            throw new Exception('Listing files is only available to administrators', 400, Exception::USER_UNAUTHORIZED);
+        }
+
         $bucket = Authorization::skip(fn () => $dbForProject->getDocument('buckets', $bucketId));
 
         if (
@@ -713,6 +719,8 @@ App::get('/v1/storage/buckets/:bucketId/files')
                 throw new Exception('Unauthorized permissions', 401, Exception::USER_UNAUTHORIZED);
             }
         }
+
+        isadmin
 
         $queries = [new Query('bucketId', Query::TYPE_EQUAL, [$bucketId])];
 
