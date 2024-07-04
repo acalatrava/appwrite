@@ -539,8 +539,9 @@ App::patch('/v1/users/:userId/password')
     ->inject('response')
     ->inject('dbForProject')
     ->inject('audits')
+    ->inject('usage')
     ->inject('events')
-    ->action(function (string $userId, string $password, Response $response, Database $dbForProject, EventAudit $audits, Event $events) {
+    ->action(function (string $userId, string $password, Response $response, Database $dbForProject, EventAudit $audits, Stats $usage, Event $events) {
 
         $user = $dbForProject->getDocument('users', $userId);
 
