@@ -720,8 +720,6 @@ App::get('/v1/storage/buckets/:bucketId/files')
             }
         }
 
-        isadmin
-
         $queries = [new Query('bucketId', Query::TYPE_EQUAL, [$bucketId])];
 
         if ($search) {
