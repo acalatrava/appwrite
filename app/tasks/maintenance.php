@@ -116,10 +116,15 @@ $cli
 
                 $event = new Certificate();
                 foreach ($certificates as $certificate) {
+                    $domain = $certificate->getAttribute('domain');
+
+                    Console::info("[{$time}] Scheduling a job to renew certificate for domain: {$domain}");
+                    
                     $event
                         ->setDomain(new Document([
-                            'domain' => $certificate->getAttribute('domain')
+                            'domain' => $domain
                         ]))
+                        ->setSkipRenewCheck(true)
                         ->trigger();
                 }
             } else {
