@@ -9,6 +9,10 @@ use Utopia\Domains\Domain;
 use Utopia\Database\Validator\UID;
 use Utopia\Storage\Storage;
 
+if (App::getEnv('_APP_CONSOLE', 'disabled') != 'enabled') {
+    return;
+}
+
 App::init(function (View $layout) {
 
     $layout

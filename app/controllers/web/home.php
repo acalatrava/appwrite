@@ -7,6 +7,10 @@ use Utopia\Config\Config;
 use Utopia\Database\Database;
 use Utopia\Database\Document;
 
+if (App::getEnv('_APP_CONSOLE', 'disabled') != 'enabled') {
+    return;
+}
+
 App::init(function (View $layout) {
 
     $header = new View(__DIR__ . '/../../views/home/comps/header.phtml');

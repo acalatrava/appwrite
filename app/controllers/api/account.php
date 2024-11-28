@@ -166,6 +166,12 @@ App::post('/v1/account/sessions/email')
         $profile = $dbForProject->findOne('users', [
             new Query('email', Query::TYPE_EQUAL, [$email])]);
 
+        if (App::getEnv('_APP_CONSOLE', 'disabled') != 'enabled') {
+            if ('console' !== $project->getId()) {
+                throw new Exception('Console access is disabled', 401, Exception::USER_INVALID_CREDENTIALS);
+            }
+        }
+
         if (!$profile || !Auth::passwordVerify($password, $profile->getAttribute('password'))) {
             throw new Exception('Invalid credentials', 401, Exception::USER_INVALID_CREDENTIALS); // Wrong password or username
         }
