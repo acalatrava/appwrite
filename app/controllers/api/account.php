@@ -167,7 +167,7 @@ App::post('/v1/account/sessions/email')
             new Query('email', Query::TYPE_EQUAL, [$email])]);
 
         if (App::getEnv('_APP_CONSOLE', 'disabled') != 'enabled') {
-            if ('console' !== $project->getId()) {
+            if ('console' == $project->getId()) {
                 throw new Exception('Console access is disabled', 401, Exception::USER_INVALID_CREDENTIALS);
             }
         }
